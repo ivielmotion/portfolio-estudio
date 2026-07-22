@@ -9,7 +9,7 @@
 
 backend:
   name: github
-  repo: usuario/repo # <-- CAMBIAR al publicar: "tu-usuario/tu-repo"
+  repo: ivielmotion/portfolio-estudio
 
 locale: es
 media_folder: "assets/uploads"

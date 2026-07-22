@@ -1,0 +1,728 @@
+/* ============================================================
+   ESTUDIO — hoja de estilos
+   Layout y efectos equivalentes a la referencia, con paleta de
+   marca: degradado rosa → magenta → violeta sobre blanco y
+   violeta casi negro.
+   ============================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,900&family=Lato:wght@400;700;900&display=swap');
+
+:root {
+    --brand-bg: #ffffff;
+    --brand-dark: #0e0b16;        /* violeta casi negro */
+    --brand-ink: #0e0b16;
+    --brand-ink-inv: #ffffff;
+    --brand-pink: #ef216b;
+    --brand-magenta: #d22db1;
+    --brand-violet: #b031f7;
+    --brand-lavender: #e9c8ff;
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+    overflow-y: scroll;
+}
+
+.mainBody {
+    overflow-x: hidden;
+    cursor: none;
+    font-family: 'Lato', 'Arial', sans-serif;
+    font-weight: normal;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    padding: 0;
+    margin: 0;
+    background-color: var(--brand-bg);
+    color: var(--brand-ink);
+    position: relative;
+    transition: background 0.3s linear, color 0.3s linear;
+}
+
+/* Tema oscuro (hero, premios, footer) */
+.mainBody.dark {
+    background-color: var(--brand-dark);
+    color: var(--brand-ink-inv);
+}
+
+body a { color: var(--brand-ink); transition: color 0.3s linear; }
+body.dark a { color: var(--brand-ink-inv); }
+
+/* ---------- capa del blob ---------- */
+#blob_container {
+    position: fixed;
+    width: 100vw;
+    height: 100vh;
+    top: 0;
+    left: 0;
+    background: var(--brand-bg);
+    z-index: -1;
+    transition: background-color 0.3s linear;
+}
+#blob_container canvas { display: block; }
+body.dark #blob_container { background-color: var(--brand-dark); }
+
+/* Tintes sociales sobre la capa del blob */
+body.tint-fb #blob_container { background-color: #3b5998 !important; }
+body.tint-in #blob_container { background-color: #2977c9 !important; }
+#blob_container:before {
+    content: "";
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    opacity: 0;
+    transition: opacity 0.3s;
+    background-image: linear-gradient(to bottom right, #405de6, #833ab4, #c13584, #e1306c, #fd1d1d, #f56040, #f77737, #fcaf45, #ffdc80);
+}
+body.tint-ig #blob_container:before { opacity: 1; }
+
+/* ---------- logo fijo ---------- */
+.topnav {
+    overflow: hidden;
+    background-color: rgba(255,255,255,0);
+    position: fixed;
+    top: 40px;
+}
+#logo a { display: inline-block; position: relative; }
+#logo img { display: block; width: 80px; z-index: 1; }
+#logo .logo-white {
+    position: absolute;
+    top: 0; left: 0;
+    opacity: 0;
+    transition: opacity 0.3s linear;
+}
+#logo .logo-color { transition: opacity 0.3s linear; }
+body.dark #logo .logo-white { opacity: 1; }
+body.dark #logo .logo-color { opacity: 0; }
+
+/* ---------- enlace fijo al portfolio ---------- */
+.nav-portfolio {
+    position: fixed;
+    top: 44px;
+    right: 44px;
+    z-index: 60;
+    color: #ffffff;
+    mix-blend-mode: difference;
+    text-decoration: none;
+    font-size: 14px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+}
+.nav-portfolio:hover { text-decoration: underline; }
+@media (max-width: 790px) {
+    .nav-portfolio { top: 22px; right: 24px; font-size: 12px; }
+}
+
+/* ---------- tipografía base ---------- */
+body, .work h3 { font-size: 40px; }
+
+h1, .box b {
+    font-family: 'Fraunces', serif;
+    font-weight: 900;
+}
+
+h1 {
+    margin-top: 0;
+    margin-bottom: 0;
+    font-size: 3em;
+    display: inline;
+    line-height: 0.95;
+}
+
+h3 {
+    font-family: 'Lato', 'Arial', sans-serif;
+    margin: 0 auto;
+    display: inline-block;
+    font-weight: 400;
+}
+
+h2 {
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    font-size: 0.3em;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+.work ul { font-size: 20px; line-height: 30px; }
+
+p { margin: 0; font-size: 40px; }
+#text1 p:first-child { margin-bottom: 4vh; }
+
+input, select {
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid currentColor;
+}
+
+/* ---------- layout ---------- */
+.box { width: 50%; margin: 0 auto; }
+.container { position: relative; margin-bottom: 100px; }
+.box-header, .box-pres, .box-customers {
+    transition: transform 0.25s;
+    will-change: transform;
+}
+.box-header {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+}
+.box-header h1 { margin: auto 0; }
+
+.delegato {
+    position: absolute;
+    width: 1px; height: 1px;
+    top: 40%;
+    opacity: 0;
+}
+#delegato-servicios { top: 10%; }
+section { position: relative; }
+
+.black { background-color: transparent; padding: 80px 0 50px 0; }
+
+.aa-content {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    justify-content: center;
+    position: relative;
+}
+#award-agency.container { margin-bottom: 0; padding: 50px 0; }
+
+/* ---------- clientes ---------- */
+.customer {
+    margin: 0; padding: 0;
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+}
+.customer li {
+    width: 25%;
+    box-sizing: border-box;
+    text-align: center;
+    padding: 18px 6px;
+}
+.client-ph {
+    display: inline-block;
+    font-size: 20px;
+    color: currentColor;
+    opacity: 0.85;
+    white-space: nowrap;
+}
+.customer-clients {
+    opacity: 0;
+    display: flex;
+    transform: translateY(15px);
+    transition: transform 0.3s linear 0.5s, opacity 0.3s linear 0.5s;
+}
+.customer-clients.animated { opacity: 1; transform: translateY(0); }
+
+/* ---------- premios ---------- */
+#aa-title span, #services span, #collaborations span {
+    opacity: 0;
+    display: inline-block;
+    transform: translateY(15px);
+    transition: transform 0.3s linear, opacity 0.3s linear;
+}
+#aa-title.animated span, #services.animated span, #collaborations.animated span {
+    opacity: 1; transform: translateY(0);
+}
+#aa-loghi {
+    opacity: 0;
+    transform: translateY(15px);
+    transition: transform 0.3s linear 0.3s, opacity 0.3s linear 1s;
+}
+#aa-loghi.animated { opacity: 1; transform: translateY(0); }
+#award-text { max-width: 610px; display: block; margin-bottom: 50px; }
+
+.customer-awwwards li {
+    position: relative;
+    font-family: 'Fraunces', serif;
+    font-weight: 900;
+    font-size: 3em;
+    width: 33.333%;
+}
+.award-badge {
+    display: inline-block;
+    font-family: 'Lato', sans-serif;
+    font-weight: 900;
+    font-size: 18px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    border: 2px solid currentColor;
+    border-radius: 999px;
+    padding: 14px 22px;
+}
+body .customer-awwwards li span.not_animated,
+body .customer-awwwards li span.counted {
+    color: var(--brand-lavender);
+    opacity: 0.55;
+    position: absolute;
+    z-index: -1;
+    top: -15px;
+    right: 7%;
+    border: none;
+    font-size: 1em;
+    padding: 0;
+}
+body.dark .customer-awwwards li span.not_animated,
+body.dark .customer-awwwards li span.counted { opacity: 1; color: var(--brand-lavender); }
+
+/* ---------- servicios ---------- */
+.container-box-flex { display: flex; min-height: 80vh; flex-direction: column; }
+.box-flex { display: flex; margin: auto; }
+.box-flex-left { width: 30.5%; margin-right: 7%; }
+.box-flex-left h2 { margin-top: 22px; }
+.box-flex-right { width: 62.5%; }
+.box-works { flex-wrap: wrap; display: flex; }
+.work { width: 40%; margin: 0 10% 5% 0; }
+.work h3 { font-weight: 400; margin: 0 0 15px; white-space: nowrap; }
+.work ul { padding: 0; margin: 0 auto; list-style: none; }
+
+.work-1, .work-2, .work-3, .work-4 {
+    opacity: 0;
+    display: block;
+    transform: translateX(-15px);
+}
+.work-1 { transition: transform 0.3s linear 1s,   opacity 0.3s linear 1s; }
+.work-2 { transition: transform 0.3s linear 1.4s, opacity 0.3s linear 1.4s; }
+.work-3 { transition: transform 0.3s linear 1.8s, opacity 0.3s linear 1.8s; }
+.work-4 { transition: transform 0.3s linear 2.2s, opacity 0.3s linear 2.2s; }
+.work-1.animated, .work-2.animated, .work-3.animated, .work-4.animated {
+    opacity: 1; transform: translateX(0);
+}
+
+#social-media li, #branding li, #web-design li, #advertising li {
+    display: block;
+    opacity: 0;
+    transform: translateX(-15px);
+    transition-timing-function: cubic-bezier(.25,.46,.45,.94), cubic-bezier(.25,.46,.45,.94);
+    transition-property: transform, opacity;
+    transition-duration: 0.7s, 0.7s;
+}
+#social-media.animated li, #branding.animated li,
+#web-design.animated li, #advertising.animated li {
+    opacity: 1; transform: translateX(0);
+}
+
+/* ---------- animación de letras/palabras ---------- */
+#text1 span, #intro span, #award-text span, #ftitle span {
+    display: inline-block;
+    opacity: 0;
+    transform: translateY(15px);
+    transition-timing-function: cubic-bezier(.25,.46,.45,.94), cubic-bezier(.25,.46,.45,.94);
+    transition-property: transform, opacity;
+    transition-duration: 0.7s, 0.7s;
+}
+#text1.animated span, #intro.animated span,
+#award-text.animated span, #ftitle.animated span {
+    opacity: 1; transform: translateY(0);
+}
+#intro i, #ftitle i { font-style: normal; }
+#ftitle i { white-space: nowrap; display: inline-block; }
+#customers span { white-space: nowrap; }
+.no-wrap { display: inline-block; white-space: nowrap; }
+
+#ftitle {
+    position: relative;
+    white-space: normal;
+    display: inline-block;
+    cursor: none;
+}
+#ftitle:after {
+    content: "";
+    position: absolute;
+    bottom: 0; left: 0;
+    height: 2px;
+    background-color: currentColor;
+    width: 0%;
+    transition: width 0.5s ease-out;
+}
+#ftitle:hover::after { width: 100%; }
+
+/* ---------- footer ---------- */
+footer {
+    display: flex;
+    min-height: 99vh;
+    flex-direction: column;
+    box-sizing: border-box;
+    position: relative;
+}
+footer .box {
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+    min-height: 80vh;
+}
+.top_footer, .bottom_footer { margin-top: auto; }
+footer .container { padding: 30px 0; margin: auto 0; min-height: 80vh; box-sizing: border-box; width: 100%; }
+.box-title h1 { display: inline-block; }
+.footer-box { display: flex; font-size: 20px; line-height: 35px; }
+.footer-box-right { width: 20%; }
+.footer-box-left { width: 40%; }
+.footer-box-center { width: 40%; }
+.footer-box-center ul, .footer-box-right ul {
+    display: inline; list-style: none; margin: 0; padding: 0;
+}
+#address { font-style: normal; }
+
+.footer-box-center li, #address, .footer-box-right {
+    opacity: 0;
+    display: block;
+    transform: translateY(15px);
+}
+.footer-box-center li { transition: transform 0.3s linear 1.3s, opacity 0.3s linear 1.3s; }
+#address { transition: transform 0.3s linear 1s, opacity 0.3s linear 1s; width: 100%; }
+.footer-box-right { transition: transform 0.3s linear 1.6s, opacity 0.3s linear 1.6s; }
+.footer-box-center.animated li, #address.animated, .footer-box-right.animated {
+    opacity: 1; transform: translateY(0);
+}
+
+/* ---------- botón magnético ---------- */
+.bottom_nav {
+    width: 50%;
+    position: sticky;
+    bottom: 3vh;
+    left: 50%;
+    transform: translateX(-50%);
+    pointer-events: none;
+    padding-bottom: 20px;
+}
+.edit_button {
+    position: relative;
+    margin-left: 120%;
+    pointer-events: all;
+    width: 120px;
+    height: 120px;
+    transition: top 0.5s cubic-bezier(0.075, 0.82, 0.165, 1), transform 0.5s cubic-bezier(0.075, 0.82, 0.165, 1);
+}
+.edit_button_pencil {
+    display: block;
+    width: 42%;
+    height: 42%;
+    top: 29%; left: 29%;
+    position: absolute;
+}
+.edit_button_pencil svg { width: 100%; height: 100%; fill: var(--brand-ink); transition: fill 0.3s linear; }
+body.dark .edit_button_pencil svg { fill: #fff; }
+
+.edit_button_text {
+    display: block;
+    width: 100%; height: 100%;
+    transform: scale(1);
+    transition: transform 0.3s, opacity 0.3s;
+    overflow: hidden;
+}
+.edit_button_text svg {
+    width: 100%; height: 100%;
+    animation: rotation-back 12s infinite linear;
+}
+.edit_button_text text {
+    font-size: 12.5px;
+    letter-spacing: 0;
+    text-transform: uppercase;
+    fill: var(--brand-ink);
+    transition: fill 0.3s linear;
+    font-family: 'Lato', sans-serif;
+    font-weight: 700;
+}
+body.dark .edit_button_text text { fill: #fff; }
+.edit_button:hover .edit_button_text svg { animation: rotation-back 1s infinite linear; }
+.edit_button:hover .edit_button_text {
+    transform: scale(0); opacity: 0;
+    transition: transform 0.4s linear 0.1s, opacity 0.1s linear 0.1s;
+}
+.edit_button_point {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%) scale(0);
+    width: 90%; height: 90%;
+    border-radius: 50%;
+    background-color: var(--brand-ink);
+    transition: transform 0.2s ease-out, background-color 0.3s linear;
+}
+.edit_button:hover .edit_button_point { transform: translate(-50%, -50%) scale(1); }
+.edit_button:hover .edit_button_pencil svg { fill: #fff; }
+body.dark .edit_button_point { background-color: #fff; }
+body.dark .edit_button:hover .edit_button_pencil svg { fill: var(--brand-ink); }
+
+/* ---------- overlay de contacto ---------- */
+.contact_overlay {
+    width: 120px; height: 120px;
+    border-radius: 50%;
+    background-color: #fff;
+    position: fixed;
+    transform-origin: 50% 50%;
+    transform: scale(0);
+    transition: transform 0.5s ease-out;
+    z-index: 10000;
+    pointer-events: none;
+}
+.contact_overlay.opened { transform: scale(30); }
+
+.contact_panel {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100vw; height: 100vh;
+    overflow-y: auto;
+    opacity: 0;
+    visibility: hidden;
+    z-index: -1500;
+    transform: translateY(20px);
+    transition: visibility 0.01s linear 0.31s, opacity 0.3s linear, transform 0.3s linear, z-index 0.1s linear 0.31s;
+    background: transparent;
+    color: var(--brand-ink);
+}
+.contact_panel.animated {
+    transform: translateY(0);
+    visibility: visible;
+    opacity: 1;
+    z-index: 100001;
+    transition: visibility 0.01s, opacity 0.3s linear, transform 0.3s linear;
+}
+.contact_inner {
+    width: 50%;
+    margin: 0 auto;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 60px 0;
+    box-sizing: border-box;
+}
+.contact_title {
+    font-family: 'Fraunces', serif;
+    font-weight: 900;
+    font-size: 2.2em;
+    text-transform: none;
+    letter-spacing: 0;
+    margin: 0 0 40px;
+}
+#contact_form { display: flex; flex-direction: column; }
+#contact_form input {
+    font-family: 'Lato', sans-serif;
+    font-size: 22px;
+    padding: 14px 0;
+    margin-bottom: 24px;
+    color: var(--brand-ink);
+    outline: none;
+    border-bottom: 1px solid var(--brand-ink);
+}
+#contact_form input::placeholder { color: rgba(14,11,22,0.45); }
+.contact_submit {
+    align-self: flex-start;
+    margin-top: 10px;
+    font-family: 'Lato', sans-serif;
+    font-weight: 900;
+    font-size: 18px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: #fff;
+    background: linear-gradient(90deg, var(--brand-pink), var(--brand-magenta), var(--brand-violet));
+    border: none;
+    border-radius: 999px;
+    padding: 18px 42px;
+    cursor: none;
+}
+.contact_alt { font-size: 20px; margin-top: 40px; }
+.contact_panel .contact_alt a { color: var(--brand-ink); }
+
+#close_form {
+    display: block;
+    width: 70px; height: 70px;
+    position: absolute;
+    top: 40px; right: 10%;
+    background: none;
+    border: none;
+    cursor: none;
+    padding: 0;
+}
+.close_form_ring { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
+.close_form_ring svg {
+    width: 100%; height: 100%;
+    animation: rotation 6s infinite linear;
+}
+.close_form_ring text {
+    font-size: 13px;
+    letter-spacing: 0;
+    text-transform: uppercase;
+    fill: var(--brand-ink);
+    font-family: 'Lato', sans-serif;
+    font-weight: 700;
+}
+.close_form_x {
+    position: absolute;
+    top: 50%; left: 50%;
+    width: 22px; height: 22px;
+    transform: translate(-50%, -50%);
+}
+.close_form_x:before, .close_form_x:after {
+    content: "";
+    position: absolute;
+    top: 50%; left: 0;
+    width: 100%; height: 2px;
+    background: var(--brand-ink);
+}
+.close_form_x:before { transform: rotate(45deg); }
+.close_form_x:after { transform: rotate(-45deg); }
+.close_form_point {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%) scale(0);
+    width: 90%; height: 90%;
+    border-radius: 50%;
+    background-color: var(--brand-ink);
+    transition: transform 0.2s ease-out;
+}
+#close_form:hover .close_form_point { transform: translate(-50%, -50%) scale(1); }
+#close_form:hover .close_form_x:before, #close_form:hover .close_form_x:after { background: #fff; }
+#close_form:hover .close_form_ring { opacity: 0; }
+
+/* ---------- cursor personalizado ---------- */
+.cursor__inner {
+    pointer-events: none;
+    position: absolute;
+    top: 0; left: 0;
+    border-radius: 70%;
+    mix-blend-mode: difference;
+    will-change: opacity;
+    backface-visibility: hidden;
+    z-index: 100001;
+}
+body .cursor-dot {
+    width: 14px; height: 14px;
+    background-color: #fff;
+    backface-visibility: hidden;
+}
+body .cursor-circle {
+    width: 30px; height: 30px;
+    border: 2px solid #fff;
+    backface-visibility: hidden;
+}
+.cursor_onbutton { display: none; }
+
+@keyframes rotation {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(359deg); }
+}
+@keyframes rotation-back {
+    from { transform: rotate(359deg); }
+    to { transform: rotate(0deg); }
+}
+
+/* ============================================================
+   RESPONSIVE — sistema completo
+   ------------------------------------------------------------
+   La tipografía y los elementos escalan de forma FLUIDA con
+   clamp() entre escritorio y móvil; los breakpoints solo se
+   usan donde cambia el LAYOUT.
+
+   1890px · titular mediano         790px · gutters de 24px
+   1600px · columna al 70%          768px · ajustes móvil
+   1200px · escala tipográfica      600px · premios apilados
+   1100px · columna al 80%          480px · móvil pequeño
+    880px · servicios en columna
+   ============================================================ */
+
+/* --- Escritorio mediano: titular algo menor --- */
+@media (max-width: 1890px) {
+    h1 { font-size: 2.5em; }
+}
+
+/* --- Portátil grande: columna de contenido más ancha --- */
+@media (max-width: 1600px) {
+    .box { width: 70%; }
+}
+
+/* --- Escala fluida: tipografía continua de 1200px hasta móvil --- */
+@media (max-width: 1200px) {
+    body, .work h3 { font-size: clamp(20px, 3.33vw, 40px); }
+    h1 { font-size: clamp(46px, 13vw, 100px); }
+    p { font-size: 1em; line-height: 1.35; }
+    .work ul { font-size: clamp(16px, 1.7vw, 20px); line-height: 1.5; }
+    .footer-box { font-size: clamp(16px, 1.7vw, 20px); line-height: 1.6; }
+    .client-ph { font-size: clamp(14px, 1.7vw, 20px); }
+    .award-badge { font-size: clamp(13px, 1.5vw, 18px); }
+    #contact_form input { font-size: clamp(17px, 2vw, 22px); }
+}
+
+/* --- Tableta horizontal: columna al 80% --- */
+@media (max-width: 1100px) {
+    .box { width: 80%; }
+}
+
+/* --- Servicios en una columna --- */
+@media (max-width: 880px) {
+    .box-flex { flex-direction: column; }
+    .box-flex-left { width: 100%; margin-right: 0; }
+    .box-flex-left h2 { margin-top: 0; }
+    .box-flex-right { width: 100%; }
+}
+
+/* --- Móvil grande / tableta vertical: gutters laterales de 24px --- */
+@media (max-width: 790px) {
+    .box { width: calc(100% - 48px); }
+    .container { margin-bottom: 60px; }
+    /* Logo fijo en la esquina superior izquierda */
+    .topnav { top: 18px; left: 24px; }
+    #logo img { width: 52px; }
+    /* Botón magnético a la derecha (sin hack de margen) */
+    .bottom_nav {
+        left: 0; right: 0; width: auto; transform: none;
+        padding: 0 24px 20px; display: flex; justify-content: flex-end;
+    }
+    .edit_button { margin-left: 0; width: 110px; height: 110px; }
+    /* Footer apilado */
+    .footer-box { flex-direction: column; margin-top: 60px; }
+    .footer-box-left, .footer-box-center, .footer-box-right { width: 100%; }
+    .footer-box-left { margin-bottom: 24px; }
+    .footer-box-right { padding-top: 24px; }
+    /* Servicios a ancho completo con titulares grandes */
+    .work { width: 100%; margin-right: 0; }
+    .work h3 { white-space: normal; font-size: 1.6em; }
+    /* Panel de contacto con gutters */
+    .contact_inner { width: calc(100% - 48px); }
+}
+
+/* --- Móvil: los tintes sociales no aplican en táctil --- */
+@media (max-width: 768px) {
+    body.tint-ig #blob_container:before { display: none; }
+    body.tint-in #blob_container, body.tint-fb #blob_container { display: none; }
+}
+
+/* --- Premios apilados --- */
+@media (max-width: 600px) {
+    .customer-awwwards { flex-direction: column; gap: 44px; }
+    .customer-awwwards li { width: 100%; }
+    body .customer-awwwards li span.not_animated,
+    body .customer-awwwards li span.counted { top: -18px; right: calc(50% - 84px); }
+}
+
+/* --- Móvil pequeño --- */
+@media (max-width: 480px) {
+    /* Cursor nativo restaurado; el cursor personalizado se oculta */
+    .mainBody, .mainBody a { cursor: auto; }
+    .contact_submit, #close_form, #ftitle { cursor: pointer; }
+    .cursor { display: none !important; }
+    #logo img { width: 46px; }
+    .edit_button { width: 96px; height: 96px; }
+    .customer li { width: 33.333%; padding: 14px 4px; }
+    .work h3 { font-size: 2em; }
+    .contact_title { font-size: 2em; }
+    .contact_alt { font-size: 16px; }
+}
+
+/* ---------- movimiento reducido ---------- */
+@media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    .edit_button_text svg, .close_form_ring svg { animation: none; }
+    #text1 span, #intro span, #award-text span, #ftitle span,
+    #aa-title span, #services span, #collaborations span,
+    .work-1, .work-2, .work-3, .work-4,
+    #social-media li, #branding li, #web-design li, #advertising li,
+    .customer-clients, #aa-loghi, .footer-box-center li, #address, .footer-box-right {
+        transition-duration: 0.01s !important;
+        transition-delay: 0s !important;
+    }
+}

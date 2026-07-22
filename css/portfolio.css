@@ -1,0 +1,185 @@
+/* ============================================================
+   Portfolio — hoja de estilos de la página de trabajos
+   Tema oscuro permanente (coherente con la home).
+   Optimizada: sin imágenes de fondo, sin sombras pesadas.
+   ============================================================ */
+
+/* ---------- navegación superior ---------- */
+.pf-topnav {
+    position: fixed;
+    top: 40px;
+    left: 44px;
+    z-index: 60;
+}
+.pf-topnav img { display: block; width: 80px; }
+
+.nav-back {
+    position: fixed;
+    top: 44px;
+    right: 44px;
+    z-index: 60;
+    color: #ffffff;
+    mix-blend-mode: difference;
+    text-decoration: none;
+    font-size: 14px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+}
+.nav-back:hover { text-decoration: underline; }
+
+/* ---------- cabecera ---------- */
+.pf-header {
+    padding: 160px 44px 60px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+.pf-title {
+    font-family: 'Fraunces', serif;
+    font-weight: 900;
+    font-size: clamp(48px, 9vw, 110px);
+    line-height: 0.95;
+    letter-spacing: -0.02em;
+    margin: 0 0 12px;
+}
+.pf-sub {
+    font-size: 16px;
+    opacity: 0.6;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin: 0;
+}
+
+/* ---------- cuadrícula de proyectos ---------- */
+.pf-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 28px;
+    padding: 0 44px 80px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.pf-card {
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    border-radius: 14px;
+    overflow: hidden;
+    background: rgba(255, 255, 255, 0.03);
+    transition: transform 0.35s cubic-bezier(0.22, 0.61, 0.21, 1), border-color 0.35s;
+}
+.pf-card:hover {
+    transform: translateY(-6px);
+    border-color: rgba(255, 255, 255, 0.35);
+}
+
+/* ---------- media 16:9 con facade ---------- */
+.pf-media {
+    position: relative;
+    aspect-ratio: 16 / 9;
+    overflow: hidden;
+}
+.pf-media img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+.pf-media iframe {
+    width: 100%;
+    height: 100%;
+    border: 0;
+    display: block;
+}
+.pf-placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Fraunces', serif;
+    font-weight: 900;
+    font-size: 64px;
+    background: linear-gradient(120deg, #ef216b, #d22db1 55%, #b031f7);
+    color: rgba(255, 255, 255, 0.9);
+}
+
+/* botón play (solo si hay vídeo) */
+.pf-play {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(14, 11, 22, 0.35);
+    border: 0;
+    padding: 0;
+    width: 100%;
+}
+.pf-play span {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    border: 2px solid #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    color: #ffffff;
+    background: rgba(14, 11, 22, 0.55);
+    transition: transform 0.25s;
+}
+.pf-card:hover .pf-play span { transform: scale(1.12); }
+
+/* ---------- info del proyecto ---------- */
+.pf-info { padding: 18px 20px 20px; }
+.pf-info h2 {
+    font-family: 'Fraunces', serif;
+    font-weight: 900;
+    font-size: 22px;
+    margin: 0 0 4px;
+    text-transform: none;
+    letter-spacing: 0;
+}
+.pf-year { font-size: 13px; opacity: 0.55; letter-spacing: 1px; }
+
+.pf-links { display: flex; gap: 16px; margin-top: 14px; flex-wrap: wrap; }
+.pf-links a,
+.pf-links button {
+    font-family: 'Lato', sans-serif;
+    font-weight: 700;
+    font-size: 13px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: #ffffff;
+    background: none;
+    border: none;
+    padding: 0 0 2px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.5);
+    text-decoration: none;
+}
+.pf-links a:hover, .pf-links button:hover { border-bottom-color: #ffffff; }
+
+/* ---------- pie ---------- */
+.pf-foot {
+    padding: 40px 44px 60px;
+    text-align: center;
+}
+.pf-foot a { color: #ffffff; font-size: 18px; }
+
+/* ---------- mensaje de estado (cargando / error) ---------- */
+.pf-status {
+    grid-column: 1 / -1;
+    text-align: center;
+    opacity: 0.6;
+    padding: 60px 0;
+    font-size: 16px;
+}
+
+/* ---------- responsive ---------- */
+@media (max-width: 790px) {
+    .pf-topnav { top: 18px; left: 24px; }
+    .pf-topnav img { width: 52px; }
+    .nav-back { top: 22px; right: 24px; font-size: 12px; }
+    .pf-header { padding: 110px 24px 40px; }
+    .pf-grid { padding: 0 24px 60px; grid-template-columns: 1fr; }
+    .pf-foot { padding: 30px 24px 50px; }
+}

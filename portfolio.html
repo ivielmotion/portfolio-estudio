@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Portfolio — ESTUDIO</title>
+    <meta name="description" content="Trabajos seleccionados del estudio." />
+    <link rel="icon" type="image/png" href="assets/favicon.png" />
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="css/portfolio.css" />
+</head>
+<body class="mainBody dark">
+
+    <!-- Capa del blob de partículas (fija, detrás del contenido) -->
+    <div id="blob_container" aria-hidden="true"></div>
+
+    <!-- Logo: volver a la home -->
+    <div class="pf-topnav">
+        <a href="index.html" aria-label="Volver a la home" cursor-hover>
+            <img src="assets/logo-white.png" alt="logotipo"/>
+        </a>
+    </div>
+    <a class="nav-back" href="index.html" cursor-hover>← inicio</a>
+
+    <header class="pf-header">
+        <h1 class="pf-title">portfolio</h1>
+        <p class="pf-sub">Trabajos seleccionados</p>
+    </header>
+
+    <!-- La cuadrícula se rellena desde data/content.json -->
+    <main class="pf-grid" id="pfGrid" aria-live="polite"></main>
+
+    <footer class="pf-foot">
+        <a id="pfMail" href="mailto:hola@tumarca.com" cursor-hover>hola@tumarca.com</a>
+    </footer>
+
+    <!-- Cursor personalizado -->
+    <div class="cursor" aria-hidden="true">
+        <div class="cursor__inner cursor-circle"></div>
+        <div class="cursor__inner cursor-dot"></div>
+    </div>
+
+    <script src="js/blob.js"></script>
+    <script src="js/cursor.js"></script>
+    <script src="js/portfolio.js"></script>
+</body>
+</html>

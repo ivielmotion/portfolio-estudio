@@ -1,0 +1,127 @@
+# yaml-language-server: $schema=https://unpkg.com/@sveltia/cms/schema/sveltia-cms.json
+# ============================================================
+# Panel de contenido — ESTUDIO
+# Backend GitHub. En local el nombre del repo puede ser
+# cualquiera (flujo local con File System Access API).
+# En producción: poner "usuario/repo" real y entrar con el
+# token de GitHub (botón "Sign In with Token").
+# ============================================================
+
+backend:
+  name: github
+  repo: usuario/repo # <-- CAMBIAR al publicar: "tu-usuario/tu-repo"
+
+locale: es
+media_folder: "assets/uploads"
+public_folder: "/assets/uploads"
+
+collections:
+  - name: "sitio"
+    label: "Contenido del sitio"
+    files:
+      - name: "content"
+        label: "Contenido general"
+        file: "data/content.json"
+        format: "json"
+        fields:
+          - label: "Sitio"
+            name: "site"
+            widget: "object"
+            collapsed: true
+            fields:
+              - { label: "Título (pestaña del navegador)", name: "title", widget: "string" }
+              - { label: "Descripción (SEO)", name: "description", widget: "text" }
+
+          - label: "Hero (titular principal)"
+            name: "hero"
+            widget: "object"
+            fields:
+              - label: "Palabras (una por línea)"
+                name: "lines"
+                widget: "list"
+                field: { label: "Palabra", name: "line", widget: "string" }
+
+          - label: "Presentación"
+            name: "about"
+            widget: "object"
+            fields:
+              - label: "Párrafos"
+                name: "paragraphs"
+                widget: "list"
+                field: { label: "Párrafo", name: "paragraph", widget: "text" }
+
+          - label: "Clientes"
+            name: "clients"
+            widget: "object"
+            fields:
+              - { label: "Título de la sección", name: "title", widget: "string" }
+              - label: "Lista de clientes"
+                name: "items"
+                widget: "list"
+                label_singular: "cliente"
+                fields:
+                  - { label: "Nombre", name: "name", widget: "string" }
+                  - { label: "Logo (opcional, WebP < 60 KB)", name: "logo", widget: "image", required: false }
+                  - { label: "Estilo CSS si no hay logo", name: "style", widget: "string", required: false }
+
+          - label: "Premios"
+            name: "awards"
+            widget: "object"
+            fields:
+              - { label: "Título de la sección", name: "title", widget: "string" }
+              - { label: "Texto", name: "text", widget: "text" }
+              - label: "Lista de premios"
+                name: "items"
+                widget: "list"
+                label_singular: "premio"
+                fields:
+                  - { label: "Nombre", name: "name", widget: "string" }
+                  - { label: "Cantidad", name: "count", widget: "number", value_type: "int" }
+
+          - label: "Servicios"
+            name: "services"
+            widget: "object"
+            fields:
+              - { label: "Título de la sección", name: "title", widget: "string" }
+              - label: "Grupos de servicios"
+                name: "groups"
+                widget: "list"
+                label_singular: "grupo"
+                fields:
+                  - { label: "ID (minúsculas, sin espacios)", name: "id", widget: "string" }
+                  - { label: "Nombre", name: "name", widget: "string" }
+                  - label: "Líneas"
+                    name: "items"
+                    widget: "list"
+                    field: { label: "Línea", name: "item", widget: "string" }
+
+          - label: "Contacto"
+            name: "contact"
+            widget: "object"
+            fields:
+              - label: "Llamada a la acción (palabras)"
+                name: "cta"
+                widget: "list"
+                field: { label: "Palabra", name: "word", widget: "string" }
+              - { label: "Dirección (una línea por renglón)", name: "address", widget: "text" }
+              - { label: "Email", name: "email", widget: "string" }
+              - { label: "Teléfono", name: "phone", widget: "string" }
+              - label: "Redes sociales"
+                name: "social"
+                widget: "list"
+                label_singular: "red social"
+                fields:
+                  - { label: "Nombre", name: "name", widget: "string" }
+                  - { label: "URL", name: "url", widget: "string" }
+
+          - label: "Portfolio (proyectos)"
+            name: "portfolio"
+            widget: "list"
+            label_singular: "proyecto"
+            fields:
+              - { label: "Título", name: "title", widget: "string" }
+              - { label: "Año", name: "year", widget: "string" }
+              - { label: "Imagen de portada (WebP < 60 KB)", name: "image", widget: "image", required: false }
+              - { label: "Enlace al sitio (Vercel…)", name: "url", widget: "string", required: false }
+              - { label: "Vídeo (URL de Vimeo o ID)", name: "video", widget: "string", required: false }
+              - { label: "Visible en la web", name: "visible", widget: "boolean", default: true }

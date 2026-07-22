@@ -1,0 +1,95 @@
+{
+  "site": {
+    "title": "ESTUDIO — Estudio Creativo Digital",
+    "description": "Estudio creativo digital especializado en branding, diseño web y advertising."
+  },
+  "hero": {
+    "lines": ["estudio", "creativo", "digital"]
+  },
+  "about": {
+    "paragraphs": [
+      "Somos un estudio creativo digital independiente, especializado en branding, diseño web y advertising.",
+      "Un laboratorio dedicado a sus clientes con estilo propio, atención al detalle y cuidado artesanal."
+    ]
+  },
+  "clients": {
+    "title": "clientes",
+    "items": [
+      { "name": "NOVA", "logo": "", "style": "font-weight:900" },
+      { "name": "Kaizen", "logo": "", "style": "font-family:'Fraunces',serif" },
+      { "name": "LUMEN", "logo": "", "style": "letter-spacing:6px" },
+      { "name": "Atelier", "logo": "", "style": "font-style:italic" },
+      { "name": "BRAVA", "logo": "", "style": "font-weight:900" },
+      { "name": "Ondine", "logo": "", "style": "font-family:'Fraunces',serif;font-style:italic" },
+      { "name": "PRISMA", "logo": "", "style": "letter-spacing:4px" },
+      { "name": "norte®", "logo": "", "style": "font-weight:700" },
+      { "name": "VOLTIO", "logo": "", "style": "font-weight:900;font-style:italic" },
+      { "name": "Casa Río", "logo": "", "style": "font-family:'Fraunces',serif" },
+      { "name": "MAREA", "logo": "", "style": "letter-spacing:8px" },
+      { "name": "delta.", "logo": "", "style": "font-weight:900" }
+    ]
+  },
+  "awards": {
+    "title": "premios y reconocimientos",
+    "text": "Cada proyecto es un reto al que no sabemos renunciar.",
+    "items": [
+      { "name": "awwwards", "count": 2 },
+      { "name": "cssda", "count": 4 },
+      { "name": "csswinner", "count": 1 }
+    ]
+  },
+  "services": {
+    "title": "servicios",
+    "groups": [
+      {
+        "id": "branding",
+        "name": "Branding",
+        "items": ["Análisis y estrategia", "Dirección creativa", "Dirección de arte", "Identidad visual", "Tono de voz", "Naming", "Copywriting", "Storytelling", "Producción foto y vídeo", "Ilustración"]
+      },
+      {
+        "id": "web-design",
+        "name": "Diseño Web",
+        "items": ["Landing pages", "Sitios web", "eCommerce", "Apps web", "UI / UX", "Integración API", "Dirección técnica"]
+      },
+      {
+        "id": "advertising",
+        "name": "Advertising",
+        "items": ["Campañas publicitarias", "SEO", "SEM", "Google Ads", "Social Ads"]
+      },
+      {
+        "id": "social-media",
+        "name": "Social Media",
+        "items": ["Estrategia", "Gestión de redes", "Community management"]
+      }
+    ]
+  },
+  "contact": {
+    "cta": ["inicia", "un", "proyecto"],
+    "address": "Tu Estudio\nCalle Ejemplo, 0\n00000 - Tu Ciudad",
+    "email": "hola@tumarca.com",
+    "phone": "+00 000 000 000",
+    "social": [
+      { "name": "Facebook", "url": "https://www.facebook.com/" },
+      { "name": "Instagram", "url": "https://www.instagram.com/" },
+      { "name": "LinkedIn", "url": "https://www.linkedin.com/" }
+    ]
+  },
+  "portfolio": [
+    {
+      "title": "Proyecto ejemplo 1",
+      "year": "2026",
+      "image": "",
+      "url": "https://example.com",
+      "video": "",
+      "visible": true
+    },
+    {
+      "title": "Proyecto ejemplo 2",
+      "year": "2025",
+      "image": "",
+      "url": "https://example.com",
+      "video": "",
+      "visible": true
+    }
+  ]
+}

@@ -1,0 +1,12 @@
+{
+  "name": "web-marca",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Sitio one-page con nube de partículas orgánica y transiciones ligadas al scroll.",
+  "scripts": {
+    "dev": "vite"
+  },
+  "devDependencies": {
+    "vite": "^5.4.11"
+  }
+}

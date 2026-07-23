@@ -82,6 +82,8 @@ body.tint-ig #blob_container:before { opacity: 1; }
     background-color: rgba(255,255,255,0);
     position: fixed;
     top: 40px;
+    left: 44px;
+    z-index: 60;
 }
 #logo a { display: inline-block; position: relative; }
 #logo img { display: block; width: 80px; z-index: 1; }
@@ -95,22 +97,38 @@ body.tint-ig #blob_container:before { opacity: 1; }
 body.dark #logo .logo-white { opacity: 1; }
 body.dark #logo .logo-color { opacity: 0; }
 
-/* ---------- enlace fijo al portfolio ---------- */
-.nav-portfolio {
+/* ---------- acceso fijo a trabajos / futuro demo reel ---------- */
+.nav-media {
     position: fixed;
-    top: 44px;
+    top: 38px;
     right: 44px;
     z-index: 60;
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1.5px solid #ffffff;
+    border-radius: 50%;
     color: #ffffff;
     mix-blend-mode: difference;
     text-decoration: none;
-    font-size: 14px;
-    letter-spacing: 2px;
-    text-transform: uppercase;
+    transition: transform 0.25s ease, background-color 0.25s ease;
 }
-.nav-portfolio:hover { text-decoration: underline; }
-@media (max-width: 790px) {
-    .nav-portfolio { top: 22px; right: 24px; font-size: 12px; }
+.nav-media:hover {
+    transform: scale(1.08);
+    background-color: #ffffff;
+}
+.nav-media__play {
+    width: 0;
+    height: 0;
+    margin-left: 3px;
+    border-top: 6px solid transparent;
+    border-bottom: 6px solid transparent;
+    border-left: 10px solid currentColor;
+}
+.nav-media:hover .nav-media__play {
+    color: #000000;
 }
 
 /* ---------- tipografía base ---------- */
@@ -217,6 +235,28 @@ section { position: relative; }
     transition: transform 0.3s linear 0.5s, opacity 0.3s linear 0.5s;
 }
 .customer-clients.animated { opacity: 1; transform: translateY(0); }
+
+.clients-portfolio {
+    width: fit-content;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin: 36px auto 0;
+    padding: 12px 20px;
+    border: 1px solid currentColor;
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    text-decoration: none;
+    transition: transform 0.25s ease, background-color 0.25s ease, color 0.25s ease;
+}
+.clients-portfolio:hover {
+    transform: translateY(-2px);
+    background-color: currentColor;
+}
+.clients-portfolio:hover span { filter: invert(1); }
 
 /* ---------- premios ---------- */
 #aa-title span, #services span, #collaborations span {
@@ -667,6 +707,17 @@ body .cursor-circle {
     /* Logo fijo en la esquina superior izquierda */
     .topnav { top: 18px; left: 24px; }
     #logo img { width: 52px; }
+    .nav-media {
+        top: 16px;
+        right: 24px;
+        width: 40px;
+        height: 40px;
+    }
+    .nav-media__play {
+        border-top-width: 5px;
+        border-bottom-width: 5px;
+        border-left-width: 8px;
+    }
     /* Botón magnético a la derecha (sin hack de margen) */
     .bottom_nav {
         left: 0; right: 0; width: auto; transform: none;
@@ -708,6 +759,12 @@ body .cursor-circle {
     #logo img { width: 46px; }
     .edit_button { width: 96px; height: 96px; }
     .customer li { width: 33.333%; padding: 14px 4px; }
+    .clients-portfolio {
+        margin-top: 28px;
+        padding: 10px 16px;
+        font-size: 11px;
+        gap: 10px;
+    }
     .work h3 { font-size: 2em; }
     .contact_title { font-size: 2em; }
     .contact_alt { font-size: 16px; }

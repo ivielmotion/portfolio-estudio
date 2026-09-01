@@ -255,21 +255,19 @@
 
     function playerMarkup(project) {
         var poster = project.poster || project.image || '';
-        var backdrop = poster ?
-            '<img class="pj-player__backdrop" src="' + esc(poster) +
-            '" alt="" aria-hidden="true" />' : '';
         var playerPoster = poster ?
             '<img class="pj-player__poster-media" src="' + esc(poster) +
-            '" alt="" aria-hidden="true" />' :
+                '" alt="" aria-hidden="true" />' :
             '<div class="pj-player__poster-media pj-player__poster-media--placeholder" ' +
                 'aria-hidden="true">' + esc(project.title || 'Vídeo') + '</div>';
         return '<div class="pj-player" id="pjPlayer" role="dialog" ' +
             'aria-modal="true" aria-label="Reproductor de vídeo" hidden>' +
-                backdrop + '<div class="pj-player__shade"></div>' +
+                '<div class="pj-player__shade"></div>' +
                 '<div class="pj-player__stage">' +
-                    '<div class="pj-player__video" id="pjVimeoMount"></div>' +
-                    '<div class="pj-player__poster" id="pjPlayerPoster" ' +
-                        'aria-hidden="true">' + playerPoster + '</div>' +
+                    '<div class="pj-player__video" id="pjVimeoMount">' +
+                        '<div class="pj-player__poster" id="pjPlayerPoster" ' +
+                            'aria-hidden="true">' + playerPoster + '</div>' +
+                    '</div>' +
                     '<p class="pj-player__loading" id="pjPlayerLoading" hidden>' +
                         'Preparando vídeo…</p>' +
                     '<button class="pj-player__surface" id="pjPlayerSurface" ' +
@@ -810,7 +808,8 @@
         updatePlayButton(false);
         setPlayerPlaybackReady(false);
         sizePlayerVideo(16, 9);
-        mount.innerHTML = '';
+        var existingIframe = mount.querySelector('iframe');
+        if (existingIframe) existingIframe.remove();
         document.getElementById('pjPlayerClose').focus();
 
         var preparation = vimeoPreload && vimeoPreload.url === url ?
@@ -955,7 +954,10 @@
                 vimeoPlayer.destroy().catch(function () {});
             }
             vimeoPlayer = null;
-            if (mount) mount.innerHTML = '';
+            if (mount) {
+                var mountedIframe = mount.querySelector('iframe');
+                if (mountedIframe) mountedIframe.remove();
+            }
             overlay.hidden = true;
             overlay.classList.remove('is-closing');
             overlay.dataset.videoReady = 'false';

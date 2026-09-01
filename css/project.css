@@ -579,35 +579,12 @@ body.pj-player-open {
     overflow: hidden;
     color: #ffffff;
     background: #f0f1fa;
-    animation: pj-player-in 0.38s ease both;
-}
-
-@keyframes pj-player-in {
-    from { opacity: 0; }
-    to { opacity: 1; }
+    animation: none;
 }
 
 .pj-player.is-closing {
     pointer-events: none;
-    animation: pj-player-out 0.3s ease both;
-}
-
-@keyframes pj-player-out {
-    from { opacity: 1; }
-    to { opacity: 0; }
-}
-
-.pj-player__backdrop {
-    position: absolute;
-    inset: -4%;
-    z-index: 0;
-    width: 108%;
-    height: 108%;
-    object-fit: cover;
-    object-position: center center;
-    transform: scale(1.04);
-    filter: blur(24px) saturate(0.86);
-    opacity: 0.72;
+    animation: none;
 }
 
 .pj-player__shade {
@@ -665,10 +642,10 @@ body.pj-player-open {
 
 .pj-player__poster-media {
     display: block;
-    width: min(100vw, calc(100svh * 16 / 9));
-    height: min(100svh, calc(100vw * 9 / 16));
-    max-width: 100vw;
-    max-height: 100svh;
+    width: 100%;
+    height: 100%;
+    max-width: none;
+    max-height: none;
     object-fit: cover;
     box-shadow: 0 22px 70px rgba(14, 11, 22, 0.22);
 }

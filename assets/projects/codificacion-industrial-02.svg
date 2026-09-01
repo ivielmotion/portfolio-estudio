@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1000" viewBox="0 0 1600 1000" role="img" aria-labelledby="title desc">
+  <title id="title">Flujo industrial de datos</title>
+  <desc id="desc">Módulos conectados en tonos naranjas, violetas y negros.</desc>
+  <defs>
+    <radialGradient id="glow" cx=".7" cy=".25" r=".8">
+      <stop offset="0" stop-color="#ff7a31"/>
+      <stop offset=".42" stop-color="#6125d8"/>
+      <stop offset="1" stop-color="#08070b"/>
+    </radialGradient>
+    <filter id="blur"><feGaussianBlur stdDeviation="42"/></filter>
+  </defs>
+  <rect width="1600" height="1000" fill="#08070b"/>
+  <circle cx="1190" cy="232" r="390" fill="url(#glow)" opacity=".78" filter="url(#blur)"/>
+  <g fill="none" stroke="#ffffff" stroke-opacity=".16" stroke-width="2">
+    <path d="M0 170H1600M0 500H1600M0 830H1600"/>
+    <path d="M270 0V1000M800 0V1000M1330 0V1000"/>
+  </g>
+  <text x="102" y="148" fill="#ffffff" font-family="Arial, sans-serif" font-size="22" letter-spacing="10">DATA FLOW / PROCESS 02</text>
+  <g transform="translate(104 272)">
+    <rect width="404" height="418" rx="40" fill="#f6f2ea"/>
+    <text x="42" y="68" fill="#0e0b16" font-family="Arial, sans-serif" font-size="18" font-weight="700">INPUT</text>
+    <text x="42" y="218" fill="#0e0b16" font-family="Arial, sans-serif" font-size="134" font-weight="700">A1</text>
+    <g fill="#0e0b16">
+      <rect x="42" y="298" width="246" height="14"/><rect x="42" y="334" width="318" height="14"/><rect x="42" y="370" width="188" height="14"/>
+    </g>
+  </g>
+  <path d="M508 482H696" stroke="#ff7a31" stroke-width="12" stroke-linecap="round"/>
+  <circle cx="702" cy="482" r="34" fill="#ff7a31"/>
+  <g transform="translate(736 230)">
+    <rect width="760" height="512" rx="42" fill="#1a112b" stroke="#b986ff" stroke-width="2"/>
+    <text x="54" y="76" fill="#b986ff" font-family="Arial, sans-serif" font-size="18" letter-spacing="6">ENCODING MATRIX</text>
+    <g transform="translate(56 134)" fill="#b986ff">
+      <rect width="82" height="272" rx="12" opacity=".22"/>
+      <rect x="112" width="82" height="272" rx="12" opacity=".42"/>
+      <rect x="224" width="82" height="272" rx="12" opacity=".64"/>
+      <rect x="336" width="82" height="272" rx="12" opacity=".86"/>
+      <rect x="448" width="82" height="272" rx="12"/>
+      <rect x="560" width="82" height="272" rx="12" opacity=".52"/>
+    </g>
+    <text x="56" y="468" fill="#ffffff" font-family="Arial, sans-serif" font-size="32" font-weight="700">SIGNAL ACCEPTED</text>
+  </g>
+  <text x="104" y="874" fill="#ffffff" font-family="Arial, sans-serif" font-size="92" font-weight="700" letter-spacing="-5">CODIFICACIÓN</text>
+  <text x="1190" y="880" fill="#ff7a31" font-family="Arial, sans-serif" font-size="28" font-weight="700">LIVE / 100%</text>
+</svg>

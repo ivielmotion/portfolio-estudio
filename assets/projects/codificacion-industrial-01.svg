@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1000" viewBox="0 0 1600 1000" role="img" aria-labelledby="title desc">
+  <title id="title">Sistema de control industrial</title>
+  <desc id="desc">Composición abstracta verde y negra inspirada en interfaces industriales.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#07100e"/>
+      <stop offset="1" stop-color="#102b24"/>
+    </linearGradient>
+    <linearGradient id="scan" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#21ffc0" stop-opacity="0"/>
+      <stop offset=".5" stop-color="#21ffc0"/>
+      <stop offset="1" stop-color="#21ffc0" stop-opacity="0"/>
+    </linearGradient>
+    <pattern id="grid" width="44" height="44" patternUnits="userSpaceOnUse">
+      <path d="M44 0H0V44" fill="none" stroke="#7fffd4" stroke-opacity=".08"/>
+    </pattern>
+  </defs>
+  <rect width="1600" height="1000" fill="url(#bg)"/>
+  <rect width="1600" height="1000" fill="url(#grid)"/>
+  <rect x="88" y="82" width="1424" height="836" rx="38" fill="none" stroke="#21ffc0" stroke-opacity=".32" stroke-width="2"/>
+  <circle cx="211" cy="184" r="16" fill="#21ffc0"/>
+  <circle cx="263" cy="184" r="16" fill="#21ffc0" opacity=".42"/>
+  <circle cx="315" cy="184" r="16" fill="#21ffc0" opacity=".16"/>
+  <text x="112" y="324" fill="#effff9" font-family="Arial, sans-serif" font-size="98" font-weight="700" letter-spacing="-4">CODE / 01</text>
+  <text x="118" y="376" fill="#21ffc0" font-family="Arial, sans-serif" font-size="24" letter-spacing="8">INDUSTRIAL SIGNAL SYSTEM</text>
+  <g transform="translate(112 492)">
+    <rect width="688" height="264" rx="24" fill="#0a1714" stroke="#21ffc0" stroke-opacity=".45"/>
+    <path d="M56 185C136 62 231 242 321 121S501 202 631 74" fill="none" stroke="#21ffc0" stroke-width="8"/>
+    <g fill="#effff9">
+      <circle cx="56" cy="185" r="10"/><circle cx="321" cy="121" r="10"/><circle cx="631" cy="74" r="10"/>
+    </g>
+  </g>
+  <g transform="translate(866 492)">
+    <rect width="622" height="264" rx="24" fill="#21ffc0"/>
+    <text x="48" y="92" fill="#07100e" font-family="Arial, sans-serif" font-size="26" font-weight="700">READING STATUS</text>
+    <text x="48" y="197" fill="#07100e" font-family="Arial, sans-serif" font-size="96" font-weight="700">98.42%</text>
+  </g>
+  <rect x="88" y="820" width="1424" height="3" fill="url(#scan)"/>
+  <text x="112" y="875" fill="#effff9" fill-opacity=".55" font-family="Arial, sans-serif" font-size="18" letter-spacing="5">IVAN ARIEL — VISUAL DEVELOPMENT</text>
+</svg>

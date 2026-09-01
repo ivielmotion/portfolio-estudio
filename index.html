@@ -6,16 +6,12 @@
     <title>ESTUDIO — Estudio Creativo Digital</title>
     <meta name="description" content="Estudio creativo digital especializado en branding, diseño web y advertising." />
     <link rel="icon" type="image/png" href="assets/favicon.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..900;1,6..96,400..900&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400;1,600&family=DM+Sans:ital,wght@0,400;0,500;0,700;1,400&family=EB+Garamond:ital,wght@0,400;0,600;1,400;1,600&family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;1,9..144,400&family=Instrument+Serif:ital@0;1&family=Manrope:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;1,400;1,600&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Poppins:ital,wght@0,400;0,600;1,400&family=Sora:wght@400;600;700&family=Space+Grotesk:wght@400;600;700&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="css/style.css" />
 </head>
-<body class="mainBody" id="start">
-
-    <!-- ============================================================
-         TEXTOS EDITABLES: todo el contenido de marca está en este
-         archivo. Busca "EDITAR" para cambiar textos, enlaces y datos.
-         Los textos se dividen en letras/palabras automáticamente
-         mediante data-split (no hace falta escribir los <span>).
-         ============================================================ -->
+<body class="mainBody theme-option-a" id="start">
 
     <!-- Capa del blob de partículas (fija, detrás del contenido) -->
     <div id="blob_container" aria-hidden="true"></div>
@@ -23,53 +19,67 @@
     <div class="button-navigator">
 
         <!-- HERO -->
-        <section>
+        <section class="home-panel home-panel--hero">
             <span class="delegato" id="delegato-hero"></span>
             <div class="container">
                 <div class="box box-header">
-                    <!-- EDITAR: titular principal, 3 líneas -->
                     <h1 id="intro">
-                        <i class="no-wrap" data-split>estudio</i>
-                        <i class="no-wrap" data-split>creativo</i>
-                        <i class="no-wrap" data-split>digital</i>
+                        <i class="no-wrap font-ui" data-split>estudio</i>
+                        <i class="no-wrap font-editorial" data-split>creativo</i>
+                        <i class="no-wrap font-ui" data-split>digital</i>
                     </h1>
                 </div>
             </div>
         </section>
 
-        <!-- PRESENTACIÓN -->
-        <section>
-            <span class="delegato" id="delegato-texto"></span>
-            <div class="container">
-                <div class="box box-pres" id="text1">
-                    <!-- EDITAR: párrafos de presentación -->
-                    <p data-split>Somos un estudio creativo digital independiente, especializado en branding, diseño web y advertising.</p>
-                    <p data-split>Un laboratorio dedicado a sus clientes con estilo propio, atención al detalle y cuidado artesanal.</p>
-                </div>
-            </div>
-        </section>
-
         <!-- CLIENTES -->
-        <section>
+        <section class="home-panel home-panel--clients">
             <span class="delegato" id="delegato-clientes"></span>
             <div class="container">
                 <div class="box box-customers">
-                    <h2 id="customers"><span id="collaborations" data-split>clientes</span></h2>
-                    <!-- EDITAR: sustituye estos nombres por logotipos <img> de tus clientes -->
-                    <ul class="customer customer-clients">
-                        <li><span class="client-ph" style="font-weight:900">NOVA</span></li>
-                        <li><span class="client-ph" style="font-family:'Fraunces',serif">Kaizen</span></li>
-                        <li><span class="client-ph" style="letter-spacing:6px">LUMEN</span></li>
-                        <li><span class="client-ph" style="font-style:italic">Atelier</span></li>
-                        <li><span class="client-ph" style="font-weight:900">BRAVA</span></li>
-                        <li><span class="client-ph" style="font-family:'Fraunces',serif;font-style:italic">Ondine</span></li>
-                        <li><span class="client-ph" style="letter-spacing:4px">PRISMA</span></li>
-                        <li><span class="client-ph" style="font-weight:700">norte®</span></li>
-                        <li><span class="client-ph" style="font-weight:900;font-style:italic">VOLTIO</span></li>
-                        <li><span class="client-ph" style="font-family:'Fraunces',serif">Casa Río</span></li>
-                        <li><span class="client-ph" style="letter-spacing:8px">MAREA</span></li>
-                        <li><span class="client-ph" style="font-weight:900">delta.</span></li>
-                    </ul>
+                    <h2 id="customers"><span id="collaborations" data-split>recomendaciones</span></h2>
+                    <section class="client-testimonials" aria-label="Recomendaciones de clientes">
+                        <div class="client-testimonials__viewport" aria-live="polite" tabindex="0" aria-label="Carrusel de recomendaciones. Usa las flechas del teclado o arrastra para cambiar.">
+                            <div class="client-testimonials__track" id="clientTestimonialsTrack">
+                                <article class="client-testimonial is-active" data-testimonial-index="0" aria-hidden="false">
+                                    <blockquote>He disfrutado mucho trabajando con Ivan; le dimos muy poco y ha logrado muchísimo con el vídeo. Ya estamos planeando su próximo proyecto.</blockquote>
+                                    <footer><strong>Simon James</strong><span>Director en Intechnique</span></footer>
+                                </article>
+                                <article class="client-testimonial" data-testimonial-index="1" aria-hidden="true">
+                                    <blockquote>El trabajo de Ivan es totalmente original y de excelente diseño. ¡Logró crear una animación para mi pantalla de inicio mejor de lo que jamás hubiera imaginado!</blockquote>
+                                    <footer><strong>Jordán</strong><span>Propietario de GoFlex</span></footer>
+                                </article>
+                                <article class="client-testimonial" data-testimonial-index="2" aria-hidden="true">
+                                    <blockquote>Un auténtico profesional, un inversor en acción. Excelentes habilidades interpersonales. Paciente y amable.</blockquote>
+                                    <footer><strong>Ashra</strong><span>Propietaria Spa Ashra</span></footer>
+                                </article>
+                            </div>
+                        </div>
+                        <div class="client-testimonials__status" role="status" aria-live="polite">
+                            <span id="clientTestimonialsCounter">01 / 03</span>
+                            <span class="client-testimonials__progress" aria-hidden="true">
+                                <span id="clientTestimonialsProgress"></span>
+                            </span>
+                        </div>
+                    </section>
+                    <div class="client-logos-carousel" aria-label="Logotipos de clientes">
+                        <div class="client-logos-viewport">
+                            <ul class="customer customer-clients client-logo-track" id="clientLogosTrack">
+                                <li><span class="client-ph font-ui" style="font-weight:700">NOVA</span></li>
+                                <li><span class="client-ph font-editorial">Kaizen</span></li>
+                                <li><span class="client-ph font-ui" style="letter-spacing:6px">LUMEN</span></li>
+                                <li><span class="client-ph font-ui" style="font-style:italic">Atelier</span></li>
+                                <li><span class="client-ph font-ui" style="font-weight:700">BRAVA</span></li>
+                                <li><span class="client-ph font-editorial" style="font-style:italic">Ondine</span></li>
+                                <li><span class="client-ph font-ui" style="letter-spacing:4px">PRISMA</span></li>
+                                <li><span class="client-ph font-ui" style="font-weight:600">norte®</span></li>
+                                <li><span class="client-ph font-ui" style="font-weight:700;font-style:italic">VOLTIO</span></li>
+                                <li><span class="client-ph font-editorial">Casa Río</span></li>
+                                <li><span class="client-ph font-ui" style="letter-spacing:8px">MAREA</span></li>
+                                <li><span class="client-ph font-ui" style="font-weight:700">delta.</span></li>
+                            </ul>
+                        </div>
+                    </div>
                     <a class="clients-portfolio" href="portfolio.html" cursor-hover>
                         <span>ver portfolio</span><span aria-hidden="true">→</span>
                     </a>
@@ -77,96 +87,51 @@
             </div>
         </section>
 
-        <!-- PREMIOS -->
-        <div class="aa-content">
-            <span class="delegato" id="delegato-premios"></span>
-            <div id="award-agency" class="container black">
-                <div class="box" id="awwwards">
-                    <h2 id="aa-title" data-split>premios y reconocimientos</h2>
-                    <!-- EDITAR: texto de premios -->
-                    <span id="award-text" data-split>Cada proyecto es un reto al que no sabemos renunciar.</span>
-                    <ul id="aa-loghi" class="customer customer-awwwards">
-                        <!-- EDITAR: premios y cantidades (data-count) -->
-                        <li>
-                            <span class="award-badge">awwwards</span>
-                            <span class="not_animated" data-count="2">2</span>
-                        </li>
-                        <li>
-                            <span class="award-badge">cssda</span>
-                            <span class="not_animated" data-count="4">4</span>
-                        </li>
-                        <li>
-                            <span class="award-badge">csswinner</span>
-                            <span class="not_animated" data-count="1">1</span>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-
         <!-- SERVICIOS -->
-        <span class="delegato" id="delegato-servicios"></span>
-        <div class="container">
-            <div class="box">
-                <div class="container-box-flex">
-                    <div class="box-flex">
-                        <div class="box-flex-left">
-                            <h2 id="services" data-split>servicios</h2>
-                        </div>
-                        <div class="box-flex-right">
-                            <div class="box-works">
-                                <!-- EDITAR: servicios -->
-                                <div class="work work-1">
-                                    <h3>Branding</h3>
-                                    <ul id="branding">
-                                        <li>Análisis y estrategia</li>
-                                        <li>Dirección creativa</li>
-                                        <li>Dirección de arte</li>
-                                        <li>Identidad visual</li>
-                                        <li>Tono de voz</li>
-                                        <li>Naming</li>
-                                        <li>Copywriting</li>
-                                        <li>Storytelling</li>
-                                        <li>Producción foto y vídeo</li>
-                                        <li>Ilustración</li>
+        <section class="home-panel home-panel--services">
+            <span class="delegato" id="delegato-servicios"></span>
+            <div class="container">
+                <div class="box">
+                    <div class="container-box-flex">
+                        <div class="box-flex">
+                            <h2 id="services" class="sr-only">servicios</h2>
+                            <div class="box-flex-right">
+                                <div class="box-works">
+                                <article class="work work-1">
+                                    <span class="service-number font-editorial">01.</span>
+                                    <h3>Video &amp; Motion</h3>
+                                    <p>Comunicación visual dinámica para marcas, productos y contenidos digitales.</p>
+                                    <ul class="service-categories" aria-label="Categorías de Video y Motion">
+                                        <li>Edición de Video</li>
+                                        <li>Motion Graphics</li>
                                     </ul>
-                                </div>
-                                <div class="work work-2">
-                                    <h3>Diseño Web</h3>
-                                    <ul id="web-design">
-                                        <li>Landing pages</li>
-                                        <li>Sitios web</li>
-                                        <li>eCommerce</li>
-                                        <li>Apps web</li>
-                                        <li>UI / UX</li>
-                                        <li>Integración API</li>
-                                        <li>Dirección técnica</li>
+                                </article>
+                                <article class="work work-2">
+                                    <span class="service-number font-editorial">02.</span>
+                                    <h3>Web &amp; Apps</h3>
+                                    <p>Soluciones digitales que integran experiencia, tecnología e inteligencia artificial.</p>
+                                    <ul class="service-categories" aria-label="Categorías de Web y Apps">
+                                        <li>Diseño Web</li>
+                                        <li>Diseño de Apps</li>
+                                        <li>UI/UX</li>
                                     </ul>
-                                </div>
-                                <div class="work work-3">
-                                    <h3>Advertising</h3>
-                                    <ul id="advertising">
-                                        <li>Campañas publicitarias</li>
-                                        <li>SEO</li>
-                                        <li>SEM</li>
-                                        <li>Google Ads</li>
-                                        <li>Social Ads</li>
+                                </article>
+                                <article class="work work-3">
+                                    <span class="service-number font-editorial">03.</span>
+                                    <h3>Digital Ads</h3>
+                                    <p>Estrategias de comunicación diseñadas para impulsar objetivos comerciales.</p>
+                                    <ul class="service-categories" aria-label="Categorías de Digital Ads">
+                                        <li>Diseño Gráfico</li>
+                                        <li>Meta Ads</li>
                                     </ul>
-                                </div>
-                                <div class="work work-4">
-                                    <h3>Social Media</h3>
-                                    <ul id="social-media">
-                                        <li>Estrategia</li>
-                                        <li>Gestión de redes</li>
-                                        <li>Community management</li>
-                                    </ul>
+                                </article>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
+        </section>
 
         <!-- BOTÓN MAGNÉTICO FLOTANTE -->
         <div class="bottom_nav">
@@ -192,39 +157,35 @@
     </div>
 
     <!-- FOOTER / CONTACTO -->
-    <footer>
+    <footer class="home-panel home-panel--project">
         <span class="delegato" id="delegato-footer"></span>
         <div class="container black">
-            <div class="box">
+            <div class="box footer-inner">
                 <div class="top_footer">
                     <div class="box-title">
-                        <!-- EDITAR: llamada a la acción -->
                         <h1 id="ftitle" role="button" tabindex="0">
-                            <i class="no-wrap" data-split>inicia</i>
-                            <i class="no-wrap" data-split>un</i>
-                            <i class="no-wrap" data-split>proyecto</i>
+                            <i class="no-wrap font-ui" data-split>inicia</i>
+                            <i class="no-wrap font-ui" data-split>un</i>
+                            <i class="no-wrap font-editorial" data-split>proyecto</i>
                         </h1>
                     </div>
                 </div>
                 <div class="bottom_footer">
                     <div class="footer-box">
                         <div class="footer-box-left">
-                            <!-- EDITAR: dirección -->
-                            <address id="address">Tu Estudio<br/>Calle Ejemplo, 0<br/>00000 - Tu Ciudad</address>
+                            <address id="address">Tu Estudio</address>
                         </div>
                         <div class="footer-box-center">
                             <ul>
-                                <!-- EDITAR: email y teléfono -->
-                                <li><a id="mail" href="mailto:hola@tumarca.com" cursor-hover>hola@tumarca.com</a></li>
-                                <li id="phone">+00 000 000 000</li>
+                                <li><a id="mail" href="mailto:info@ivanariel.me" cursor-hover>info@ivanariel.me</a></li>
+                                <li id="phone">77050026</li>
                             </ul>
                         </div>
                         <div class="footer-box-right">
                             <ul>
-                                <!-- EDITAR: redes sociales -->
-                                <li><a href="#" target="_blank" rel="nofollow" cursor-hover>Facebook</a></li>
-                                <li><a href="#" target="_blank" rel="nofollow" cursor-hover>Instagram</a></li>
-                                <li><a href="#" target="_blank" rel="nofollow" cursor-hover>LinkedIn</a></li>
+                                <li><a href="https://www.facebook.com/ivanarields" target="_blank" rel="noopener nofollow" cursor-hover>Facebook</a></li>
+                                <li><a href="https://www.instagram.com/ivanarields/" target="_blank" rel="noopener nofollow" cursor-hover>Instagram</a></li>
+                                <li><a href="https://www.tiktok.com/@ivanarields" target="_blank" rel="noopener nofollow" cursor-hover>TikTok</a></li>
                             </ul>
                         </div>
                     </div>
@@ -234,21 +195,28 @@
     </footer>
 
     <!-- LOGO FIJO -->
-    <div class="box box-topnav">
-        <div class="topnav" id="mytopnav">
-            <div class="logo" id="logo">
-                <a href="#start" aria-label="Volver arriba" cursor-hover>
-                    <img class="logo-color" src="assets/logo-color.png" alt="logotipo"/>
-                    <img class="logo-white" src="assets/logo-white.png" alt=""/>
-                </a>
+    <header class="site-header box-topnav">
+        <div class="header-inner">
+            <div class="site-header__row">
+                <nav class="site-header__nav" aria-label="Navegacion principal">
+                    <a class="site-header__link" href="#start" cursor-hover>GIF</a>
+                    <a class="site-header__link" href="portfolio.html" cursor-hover>Trabajos</a>
+                </nav>
+                <div class="topnav" id="mytopnav">
+                    <div class="logo" id="logo">
+                        <a href="#start" aria-label="Volver arriba" cursor-hover>
+                            <img class="logo-color" src="assets/logo-color-small.png" alt="logotipo"/>
+                            <img class="logo-white" src="assets/logo-white.png" alt=""/>
+                        </a>
+                    </div>
+                </div>
+                <nav class="site-header__nav site-header__nav--right" aria-label="Enlaces de estudio">
+                    <a class="site-header__link" href="about.html" cursor-hover>About</a>
+                    <a class="site-header__link" href="#delegato-footer" cursor-hover>Contact</a>
+                </nav>
             </div>
         </div>
-    </div>
-
-    <!-- ACCESO FIJO A TRABAJOS / FUTURO DEMO REEL -->
-    <a class="nav-media" href="portfolio.html" aria-label="Ver portfolio" title="Ver portfolio" cursor-hover>
-        <span class="nav-media__play" aria-hidden="true"></span>
-    </a>
+    </header>
 
     <!-- OVERLAY DE CONTACTO -->
     <span class="contact_overlay" aria-hidden="true"></span>
@@ -265,19 +233,23 @@
                 <span class="close_form_x" aria-hidden="true"></span>
             </button>
             <h2 class="contact_title">inicia un proyecto</h2>
-            <!-- EDITAR: este formulario abre el cliente de correo; conéctalo a tu backend cuando quieras -->
             <form id="contact_form">
                 <input type="text" name="nombre" placeholder="Nombre" required />
                 <input type="email" name="email" placeholder="Email" required />
                 <input type="text" name="mensaje" placeholder="Cuéntanos tu proyecto" required />
                 <button type="submit" class="contact_submit" cursor-hover>enviar</button>
             </form>
-            <p class="contact_alt">o escríbenos a <a href="mailto:hola@tumarca.com" cursor-hover>hola@tumarca.com</a></p>
+            <p class="contact_alt">o escríbenos a <a href="mailto:info@ivanariel.me" cursor-hover>info@ivanariel.me</a></p>
         </div>
     </div>
 
+    <script src="js/audio.js"></script>
+    <script src="js/particles.config.js"></script>
     <script src="js/blob.js"></script>
+    <script src="js/particle-scenes.js"></script>
     <script src="js/cursor.js"></script>
     <script src="js/render-content.js"></script>
+    <script src="js/clients-carousel.js"></script>
+    <script src="js/main.js"></script>
 </body>
 </html>

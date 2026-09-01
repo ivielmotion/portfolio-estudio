@@ -51,3 +51,17 @@
 - Contenido en JSON estático (~5 KB) en vez de CMS con API en tiempo real.
 - Blob en Canvas 2D propio (~15 KB) en vez de Three.js (~600 KB).
 - Canvas sin DPR + degradación progresiva de puntos si el FPS cae.
+
+## Arquitectura optimizada actual
+
+- Código fuente separado por responsabilidad: configuración, motor, escenas,
+  cursor, contenido y lógica de cada página.
+- Producción agrupada automáticamente en un solo JavaScript por página:
+  `home.bundle.js` y `portfolio.bundle.js`.
+- Home: ~150 KB locales y 7 archivos locales iniciales.
+- Portfolio: ~88 KB locales y 7 archivos locales iniciales.
+- Partículas: máximo aproximado de 4585 puntos en PC y 2041 en móvil.
+- Límite: 45 FPS en PC y 30 FPS en móvil, con reducción automática en equipos
+  lentos.
+- El cursor y el botón magnético dejan de trabajar cuando no hay movimiento.
+- El logo de color cargado por la página pesa ~36 KB.

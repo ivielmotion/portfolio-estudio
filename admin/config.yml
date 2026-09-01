@@ -41,20 +41,44 @@ collections:
                 widget: "list"
                 field: { label: "Palabra", name: "line", widget: "string" }
 
-          - label: "Presentación"
+          - label: "About (página independiente)"
             name: "about"
             widget: "object"
             fields:
-              - label: "Párrafos"
-                name: "paragraphs"
+              - { label: "Texto superior", name: "eyebrow", widget: "string" }
+              - { label: "Título sans", name: "titleSans", widget: "string" }
+              - { label: "Título editorial", name: "titleEditorial", widget: "string" }
+              - { label: "Introducción", name: "intro", widget: "text" }
+              - { label: "Biografía breve", name: "bio", widget: "text" }
+              - label: "Datos de perfil"
+                name: "facts"
                 widget: "list"
-                field: { label: "Párrafo", name: "paragraph", widget: "text" }
+                label_singular: "dato"
+                fields:
+                  - { label: "Etiqueta", name: "label", widget: "string" }
+                  - { label: "Texto", name: "value", widget: "string" }
+              - label: "Principios de trabajo"
+                name: "principles"
+                widget: "list"
+                label_singular: "principio"
+                fields:
+                  - { label: "Número", name: "number", widget: "string" }
+                  - { label: "Título", name: "title", widget: "string" }
+                  - { label: "Texto", name: "text", widget: "text" }
 
           - label: "Clientes"
             name: "clients"
             widget: "object"
             fields:
-              - { label: "Título de la sección", name: "title", widget: "string" }
+              - { label: "Título de recomendaciones", name: "title", widget: "string" }
+              - label: "Recomendaciones"
+                name: "testimonials"
+                widget: "list"
+                label_singular: "recomendación"
+                fields:
+                  - { label: "Texto", name: "quote", widget: "text" }
+                  - { label: "Nombre", name: "name", widget: "string" }
+                  - { label: "Cargo y empresa", name: "role", widget: "string" }
               - label: "Lista de clientes"
                 name: "items"
                 widget: "list"
@@ -63,20 +87,6 @@ collections:
                   - { label: "Nombre", name: "name", widget: "string" }
                   - { label: "Logo (opcional, WebP < 60 KB)", name: "logo", widget: "image", required: false }
                   - { label: "Estilo CSS si no hay logo", name: "style", widget: "string", required: false }
-
-          - label: "Premios"
-            name: "awards"
-            widget: "object"
-            fields:
-              - { label: "Título de la sección", name: "title", widget: "string" }
-              - { label: "Texto", name: "text", widget: "text" }
-              - label: "Lista de premios"
-                name: "items"
-                widget: "list"
-                label_singular: "premio"
-                fields:
-                  - { label: "Nombre", name: "name", widget: "string" }
-                  - { label: "Cantidad", name: "count", widget: "number", value_type: "int" }
 
           - label: "Servicios"
             name: "services"
@@ -90,10 +100,10 @@ collections:
                 fields:
                   - { label: "ID (minúsculas, sin espacios)", name: "id", widget: "string" }
                   - { label: "Nombre", name: "name", widget: "string" }
-                  - label: "Líneas"
+                  - label: "Categorías"
                     name: "items"
                     widget: "list"
-                    field: { label: "Línea", name: "item", widget: "string" }
+                    field: { label: "Categoría", name: "item", widget: "string" }
 
           - label: "Contacto"
             name: "contact"
@@ -119,9 +129,39 @@ collections:
             widget: "list"
             label_singular: "proyecto"
             fields:
+              - { label: "ID (minúsculas y guiones)", name: "id", widget: "string" }
               - { label: "Título", name: "title", widget: "string" }
+              - { label: "Subtítulo", name: "subtitle", widget: "string", required: false }
+              - { label: "Categoría", name: "category", widget: "string", required: false }
+              - { label: "Cliente", name: "client", widget: "string", required: false }
+              - { label: "Rol", name: "role", widget: "string", required: false }
               - { label: "Año", name: "year", widget: "string" }
-              - { label: "Imagen de portada (WebP < 60 KB)", name: "image", widget: "image", required: false }
-              - { label: "Enlace al sitio (Vercel…)", name: "url", widget: "string", required: false }
+              - { label: "Descripción de la página", name: "description", widget: "text", required: false }
+              - label: "Formato de la tarjeta"
+                name: "format"
+                widget: "select"
+                options:
+                  - { label: "Vertical", value: "portrait" }
+                  - { label: "Vertical alta", value: "tall" }
+                  - { label: "Cuadrada", value: "square" }
+                default: "portrait"
+              - label: "Filtros"
+                name: "tags"
+                widget: "list"
+                required: false
+                field: { label: "Filtro", name: "tag", widget: "string" }
+              - { label: "Imagen vertical del Portfolio", name: "image", widget: "image", required: false }
+              - { label: "Portada horizontal del vídeo", name: "poster", widget: "image", required: false }
               - { label: "Vídeo (URL de Vimeo o ID)", name: "video", widget: "string", required: false }
+              - { label: "Enlace externo del caso", name: "url", widget: "string", required: false }
+              - { label: "Texto del botón externo", name: "caseLabel", widget: "string", required: false }
+              - label: "Galería del proyecto"
+                name: "gallery"
+                widget: "list"
+                required: false
+                label_singular: "imagen"
+                fields:
+                  - { label: "Imagen", name: "image", widget: "image", required: false }
+                  - { label: "Texto alternativo", name: "alt", widget: "string", required: false }
+                  - { label: "Pie de imagen", name: "caption", widget: "string", required: false }
               - { label: "Visible en la web", name: "visible", widget: "boolean", default: true }

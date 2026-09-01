@@ -27,15 +27,10 @@
         var intro = document.getElementById('intro');
         if (intro && data.hero && Array.isArray(data.hero.lines)) {
             intro.innerHTML = data.hero.lines
-                .map(function (l) { return '<i class="no-wrap" data-split>' + esc(l) + '</i>'; })
-                .join('\n');
-        }
-
-        /* --- presentación --- */
-        var text1 = document.getElementById('text1');
-        if (text1 && data.about && Array.isArray(data.about.paragraphs)) {
-            text1.innerHTML = data.about.paragraphs
-                .map(function (p) { return '<p data-split>' + esc(p) + '</p>'; })
+                .map(function (l) {
+                    var content = (/<[a-z][\s\S]*>/i.test(l)) ? l : esc(l);
+                    return '<i class="no-wrap" data-split>' + content + '</i>';
+                })
                 .join('\n');
         }
 
@@ -43,9 +38,31 @@
         if (data.clients) {
             var coll = document.getElementById('collaborations');
             if (coll && data.clients.title) coll.textContent = data.clients.title;
-            var cul = document.querySelector('.customer-clients');
+
+            var testimonialTrack = document.getElementById('clientTestimonialsTrack');
+            var testimonialCounter = document.getElementById('clientTestimonialsCounter');
+            if (testimonialTrack && Array.isArray(data.clients.testimonials) &&
+                data.clients.testimonials.length) {
+                testimonialTrack.innerHTML = data.clients.testimonials.map(function (item, index) {
+                    var active = index === 0;
+                    return '<article class="client-testimonial' + (active ? ' is-active' : '') +
+                        '" data-testimonial-index="' + index + '" aria-hidden="' +
+                        String(!active) + '">' +
+                        '<blockquote>' + esc(item.quote || '') + '</blockquote>' +
+                        '<footer><strong>' + esc(item.name || '') +
+                        '</strong><span>' + esc(item.role || '') +
+                        '</span></footer></article>';
+                }).join('\n');
+
+                if (testimonialCounter) {
+                    testimonialCounter.textContent = '01 / ' +
+                        String(data.clients.testimonials.length).padStart(2, '0');
+                }
+            }
+
+            var cul = document.getElementById('clientLogosTrack');
             if (cul && Array.isArray(data.clients.items)) {
-                cul.innerHTML = data.clients.items.map(function (c) {
+                var logoMarkup = data.clients.items.map(function (c) {
                     if (c.logo) {
                         return '<li><img src="' + esc(c.logo) + '" alt="' + esc(c.name) +
                             '" loading="lazy" decoding="async" /></li>';
@@ -53,22 +70,7 @@
                     return '<li><span class="client-ph" style="' + esc(c.style || '') + '">' +
                         esc(c.name) + '</span></li>';
                 }).join('\n');
-            }
-        }
-
-        /* --- premios --- */
-        if (data.awards) {
-            var at = document.getElementById('aa-title');
-            if (at && data.awards.title) at.textContent = data.awards.title;
-            var atx = document.getElementById('award-text');
-            if (atx && data.awards.text) atx.textContent = data.awards.text;
-            var aul = document.getElementById('aa-loghi');
-            if (aul && Array.isArray(data.awards.items)) {
-                aul.innerHTML = data.awards.items.map(function (a) {
-                    var n = parseInt(a.count, 10) || 0;
-                    return '<li><span class="award-badge">' + esc(a.name) + '</span>' +
-                        '<span class="not_animated" data-count="' + n + '">' + n + '</span></li>';
-                }).join('\n');
+                cul.innerHTML = logoMarkup;
             }
         }
 
@@ -79,11 +81,19 @@
             var box = document.querySelector('.box-works');
             if (box && Array.isArray(data.services.groups)) {
                 box.innerHTML = data.services.groups.map(function (g, i) {
-                    return '<div class="work work-' + (i + 1) + '">' +
-                        '<h3>' + esc(g.name) + '</h3>' +
-                        '<ul id="' + esc(g.id || ('svc-' + (i + 1))) + '">' +
-                        (g.items || []).map(function (it) { return '<li>' + esc(it) + '</li>'; }).join('') +
-                        '</ul></div>';
+                    var titleContent = (/<[a-z][\s\S]*>/i.test(g.name)) ? g.name : esc(g.name);
+                    var descContent = (/<[a-z][\s\S]*>/i.test(g.description || '')) ? g.description : esc(g.description || '');
+                return '<article class="work work-' + (i + 1) + '">' +
+                        '<span class="service-number font-editorial">' + esc(g.number || ('0' + (i + 1) + '.')) + '</span>' +
+                        '<h3>' + titleContent + '</h3>' +
+                        '<p>' + descContent + '</p>' +
+                        (Array.isArray(g.items) && g.items.length ?
+                            '<ul class="service-categories" aria-label="Categorías de servicio">' +
+                            g.items.map(function (item) {
+                                return '<li>' + esc(item) + '</li>';
+                            }).join('') +
+                            '</ul>' : '') +
+                        '</article>';
                 }).join('\n');
             }
         }
@@ -94,7 +104,10 @@
             var ft = document.getElementById('ftitle');
             if (ft && Array.isArray(c.cta)) {
                 ft.innerHTML = c.cta
-                    .map(function (w) { return '<i class="no-wrap" data-split>' + esc(w) + '</i>'; })
+                    .map(function (w) {
+                        var content = (/<[a-z][\s\S]*>/i.test(w)) ? w : esc(w);
+                        return '<i class="no-wrap" data-split>' + content + '</i>';
+                    })
                     .join('\n');
             }
             var addr = document.getElementById('address');
@@ -119,13 +132,12 @@
     }
 
     function boot() {
-        var s = document.createElement('script');
-        s.src = 'js/main.js';
-        document.body.appendChild(s);
+        window.__CONTENT_READY__ = true;
+        window.dispatchEvent(new CustomEvent('site:content-ready'));
     }
 
     window.__CONTENT__ = null;
-    fetch('data/content.json', { cache: 'no-store' })
+    fetch('data/content.json', { cache: 'no-cache' })
         .then(function (r) {
             if (!r.ok) throw new Error('http ' + r.status);
             return r.json();

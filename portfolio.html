@@ -5,33 +5,84 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Portfolio — ESTUDIO</title>
     <meta name="description" content="Trabajos seleccionados del estudio." />
+    <script>
+        try {
+            var portfolioReturn = JSON.parse(
+                sessionStorage.getItem('portfolioReturn') || 'null'
+            );
+            if (portfolioReturn) {
+                document.documentElement.classList.add('is-portfolio-returning');
+            }
+        } catch (error) {}
+    </script>
     <link rel="icon" type="image/png" href="assets/favicon.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..900;1,6..96,400..900&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400;1,600&family=DM+Sans:ital,wght@0,400;0,500;0,700;1,400&family=EB+Garamond:ital,wght@0,400;0,600;1,400;1,600&family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;1,9..144,400&family=Instrument+Serif:ital@0;1&family=Manrope:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;1,400;1,600&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Poppins:ital,wght@0,400;0,600;1,400&family=Sora:wght@400;600;700&family=Space+Grotesk:wght@400;600;700&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="css/style.css" />
     <link rel="stylesheet" href="css/portfolio.css" />
+    <link rel="prefetch" href="project.html" />
 </head>
-<body class="mainBody dark">
+<body class="mainBody portfolio-page theme-option-a" data-page="portfolio">
 
-    <!-- Capa del blob de partículas (fija, detrás del contenido) -->
-    <div id="blob_container" aria-hidden="true"></div>
+    <div class="pf-return-cover" id="pfReturnCover" aria-hidden="true"></div>
+
+    <!-- Fondo interactivo: retícula fluida de puntos de marca
+         (inspirada en haoqi.design, fija, detrás del contenido) -->
+    <canvas id="fluid-grid" aria-hidden="true"></canvas>
+    <div class="fallback-grid" aria-hidden="true"></div>
 
     <!-- Logo: volver a la home -->
-    <div class="pf-topnav">
-        <a href="index.html" aria-label="Volver a la home" cursor-hover>
-            <img src="assets/logo-white.png" alt="logotipo"/>
-        </a>
-    </div>
-    <a class="nav-back" href="index.html" cursor-hover>← inicio</a>
-
-    <header class="pf-header">
-        <h1 class="pf-title">portfolio</h1>
-        <p class="pf-sub">Trabajos seleccionados</p>
+    <header class="site-header">
+        <div class="header-inner">
+            <div class="site-header__row">
+                <nav class="site-header__nav" aria-label="Navegacion principal">
+                    <a class="site-header__link" href="index.html" cursor-hover>GIF</a>
+                    <a class="site-header__link" href="portfolio.html" cursor-hover>Trabajos</a>
+                </nav>
+                <div class="pf-topnav">
+                    <a href="index.html" aria-label="Volver a la home" cursor-hover>
+                        <img src="assets/logo-color-small.png" alt="logotipo"/>
+                    </a>
+                </div>
+                <nav class="site-header__nav site-header__nav--right" aria-label="Enlaces de estudio">
+                    <a class="site-header__link" href="about.html" cursor-hover>About</a>
+                    <a class="site-header__link" href="#portfolio-contact" cursor-hover>Contact</a>
+                </nav>
+            </div>
+        </div>
     </header>
 
-    <!-- La cuadrícula se rellena desde data/content.json -->
-    <main class="pf-grid" id="pfGrid" aria-live="polite"></main>
+    <!-- Filtros y cuadrícula: se rellenan desde data/content.json -->
+    <main class="container portfolio-container">
+        <nav class="box pf-filters" aria-label="Filtrar proyectos">
+            <button class="pf-filter is-active" type="button" data-filter="all" aria-pressed="true" cursor-hover>Todos</button>
+            <button class="pf-filter" type="button" data-filter="video" aria-pressed="false" cursor-hover>Video &amp; Motion</button>
+            <button class="pf-filter" type="button" data-filter="web" aria-pressed="false" cursor-hover>Web &amp; Apps</button>
+            <button class="pf-filter" type="button" data-filter="ads" aria-pressed="false" cursor-hover>Publicidad</button>
+            <button class="pf-filter" type="button" data-filter="branding" aria-pressed="false" cursor-hover>Branding</button>
+        </nav>
+        <div class="box pf-grid" id="pfGrid" aria-live="polite"></div>
+    </main>
 
-    <footer class="pf-foot">
-        <a id="pfMail" href="mailto:hola@tumarca.com" cursor-hover>hola@tumarca.com</a>
+    <footer class="pf-contact" id="portfolio-contact">
+        <div class="pf-contact__inner footer-inner">
+            <div class="pf-contact__intro">
+                <p class="pf-contact__eyebrow">¿Tienes un proyecto?</p>
+                <h1 class="pf-contact__title"><span class="font-ui">Hagamos algo </span><span class="font-editorial">memorable.</span></h1>
+                <a class="pf-contact__cta" id="pfContactCta" href="mailto:hola@tumarca.com" cursor-hover>
+                    <span>Comenzar proyecto</span><span aria-hidden="true">→</span>
+                </a>
+            </div>
+            <div class="pf-contact__details">
+                <address id="pfContactAddress">Tu Estudio</address>
+                <div>
+                    <a id="pfContactMail" href="mailto:info@ivanariel.me" cursor-hover>info@ivanariel.me</a>
+                    <a id="pfContactPhone" href="tel:77050026" cursor-hover>77050026</a>
+                </div>
+                <nav id="pfContactSocial" aria-label="Redes sociales"></nav>
+            </div>
+        </div>
     </footer>
 
     <!-- Cursor personalizado -->
@@ -40,7 +91,9 @@
         <div class="cursor__inner cursor-dot"></div>
     </div>
 
-    <script src="js/blob.js"></script>
+    <script src="js/audio.js"></script>
+    <script src="js/particles.config.js"></script>
+    <script src="js/fluid-grid.js"></script>
     <script src="js/cursor.js"></script>
     <script src="js/portfolio.js"></script>
 </body>

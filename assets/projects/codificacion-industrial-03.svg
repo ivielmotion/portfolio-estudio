@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1000" viewBox="0 0 1600 1000" role="img" aria-labelledby="title desc">
+  <title id="title">Señalética de Codificación Industrial</title>
+  <desc id="desc">Composición editorial clara con elementos técnicos rojos y negros.</desc>
+  <defs>
+    <pattern id="dots" width="26" height="26" patternUnits="userSpaceOnUse">
+      <circle cx="2" cy="2" r="2" fill="#0e0b16" opacity=".12"/>
+    </pattern>
+  </defs>
+  <rect width="1600" height="1000" fill="#f4f0e8"/>
+  <rect width="1600" height="1000" fill="url(#dots)"/>
+  <rect x="0" y="0" width="56" height="1000" fill="#ef3340"/>
+  <text x="116" y="164" fill="#0e0b16" font-family="Arial, sans-serif" font-size="20" letter-spacing="12">INDUSTRIAL CODING / FINAL FRAME</text>
+  <text x="108" y="374" fill="#0e0b16" font-family="Arial, sans-serif" font-size="146" font-weight="700" letter-spacing="-8">PRECISIÓN</text>
+  <text x="108" y="512" fill="#ef3340" font-family="Arial, sans-serif" font-size="146" font-weight="700" letter-spacing="-8">EN MOVIMIENTO</text>
+  <g transform="translate(112 620)">
+    <rect width="692" height="228" rx="28" fill="#0e0b16"/>
+    <text x="42" y="65" fill="#ffffff" font-family="Arial, sans-serif" font-size="18" letter-spacing="6">SYSTEM CODE</text>
+    <text x="42" y="158" fill="#ffffff" font-family="Arial, sans-serif" font-size="74" font-weight="700">849 / 088 / 364</text>
+  </g>
+  <g transform="translate(912 620)" fill="#0e0b16">
+    <rect width="18" height="228"/><rect x="34" width="8" height="228"/><rect x="58" width="28" height="228"/>
+    <rect x="104" width="12" height="228"/><rect x="136" width="36" height="228"/><rect x="190" width="8" height="228"/>
+    <rect x="220" width="22" height="228"/><rect x="260" width="44" height="228"/><rect x="324" width="12" height="228"/>
+    <rect x="356" width="30" height="228"/><rect x="404" width="8" height="228"/><rect x="432" width="48" height="228"/>
+  </g>
+  <circle cx="1460" cy="158" r="62" fill="#ef3340"/>
+  <path d="M1434 158h52M1460 132v52" stroke="#f4f0e8" stroke-width="8"/>
+  <text x="111" y="928" fill="#0e0b16" font-family="Arial, sans-serif" font-size="18" letter-spacing="5">DIRECTION / EDITING / MOTION — IVAN ARIEL</text>
+</svg>

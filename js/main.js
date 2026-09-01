@@ -13,36 +13,60 @@
 (function () {
     'use strict';
 
+    function startMain() {
+    if (window.__MAIN_STARTED__) return;
+    window.__MAIN_STARTED__ = true;
+
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     const body = document.body;
 
-    /* ---------- 1. División de textos en spans ---------- */
+    /* ---------- 1. División de textos en spans (preservando clases e hijos) ---------- */
     function splitElement(el) {
-        const text = el.textContent;
+        const childNodes = Array.from(el.childNodes);
+        if (!childNodes.length) return;
+
+        const isWordOnly = el.hasAttribute('data-split-words');
+        const defaultClass = el.className || '';
         el.textContent = '';
         const frag = document.createDocumentFragment();
-        const words = text.split(/(\s+)/);
-        words.forEach((w) => {
-            if (/^\s+$/.test(w)) {
-                frag.appendChild(document.createTextNode(' '));
-            } else if (w.length) {
-                if (el.hasAttribute('data-split-words')) {
-                    const s = document.createElement('span');
-                    s.textContent = w;
-                    frag.appendChild(s);
-                } else {
-                    const wrap = document.createElement('span');
-                    wrap.style.whiteSpace = 'nowrap';
-                    wrap.style.display = 'inline-block';
-                    for (const ch of w) {
+
+        function processTextNode(text, cls) {
+            const words = text.split(/(\s+)/);
+            words.forEach((w) => {
+                if (/^\s+$/.test(w)) {
+                    frag.appendChild(document.createTextNode(' '));
+                } else if (w.length) {
+                    if (isWordOnly) {
                         const s = document.createElement('span');
-                        s.textContent = ch;
-                        wrap.appendChild(s);
+                        s.textContent = w;
+                        if (cls) s.className = cls;
+                        frag.appendChild(s);
+                    } else {
+                        const wrap = document.createElement('span');
+                        wrap.style.whiteSpace = 'nowrap';
+                        wrap.style.display = 'inline-block';
+                        if (cls) wrap.className = cls;
+                        for (const ch of w) {
+                            const s = document.createElement('span');
+                            s.textContent = ch;
+                            if (cls) s.className = cls;
+                            wrap.appendChild(s);
+                        }
+                        frag.appendChild(wrap);
                     }
-                    frag.appendChild(wrap);
                 }
+            });
+        }
+
+        childNodes.forEach((node) => {
+            if (node.nodeType === Node.TEXT_NODE) {
+                processTextNode(node.textContent, defaultClass);
+            } else if (node.nodeType === Node.ELEMENT_NODE) {
+                const combinedClass = [defaultClass, node.className].filter(Boolean).join(' ');
+                processTextNode(node.textContent, combinedClass);
             }
         });
+
         el.appendChild(frag);
     }
 
@@ -61,26 +85,22 @@
     }
 
     setDelay(document.getElementById('intro'), 0);
-    setDelay(document.getElementById('text1'), 100);
-    setDelay(document.getElementById('award-text'), 100);
-    setDelay(document.getElementById('aa-title'), 100);
     setDelay(document.getElementById('services'), 100);
     setDelay(document.getElementById('collaborations'), 100);
     setDelay(document.getElementById('ftitle'), 400);
 
-    function setDelayLi(id, start) {
-        document.querySelectorAll('#' + id + ' li').forEach((li, i) => {
-            li.style.transitionDelay = ((i * 20) + start) + 'ms';
-        });
-    }
-    setDelayLi('branding', 1200);
-    setDelayLi('web-design', 1600);
-    setDelayLi('advertising', 2000);
-    setDelayLi('social-media', 2400);
+    document.querySelectorAll('.work').forEach((work, i) => {
+        work.style.transitionDelay = (400 + (i * 140)) + 'ms';
+    });
 
     /* ---------- 2. Blob ---------- */
     const blob = new ParticleBlob(document.getElementById('blob_container'));
+    window.siteParticles = blob;
     blob.start();
+    const sceneController = new ParticleSceneController(blob);
+    window.siteParticleScenes = sceneController;
+    sceneController.start();
+    if (window.AudioEngine) AudioEngine.bindPage({ blob: blob });
 
     /* ---------- 3. Utilidades de viewport ---------- */
     function isInViewport(elem) {
@@ -94,34 +114,11 @@
     }
 
     const dHero = document.getElementById('delegato-hero');
-    const dTexto = document.getElementById('delegato-texto');
     const dClientes = document.getElementById('delegato-clientes');
-    const dPremios = document.getElementById('delegato-premios');
     const dServicios = document.getElementById('delegato-servicios');
     const dFooter = document.getElementById('delegato-footer');
 
-    /* ---------- 4. Contadores de premios ---------- */
-    const awardSpans = Array.from(document.querySelectorAll('.customer-awwwards li span[data-count]'));
-    awardSpans.forEach((s) => { s.dataset.final = s.textContent; s.textContent = ''; });
-    let awardsDone = false;
-    function animateNumbers() {
-        if (awardsDone) return;
-        awardsDone = true;
-        awardSpans.forEach((obj) => {
-            const end = parseInt(obj.dataset.count, 10);
-            let z = end - 1;
-            const dur = 500 + Math.floor(Math.random() * 2000);
-            obj.classList.remove('not_animated');
-            obj.classList.add('counted');
-            const tmr = setInterval(() => {
-                obj.textContent = z;
-                z = (z === 9) ? 0 : z + 1;
-            }, 50);
-            setTimeout(() => { clearInterval(tmr); obj.textContent = end; }, dur);
-        });
-    }
-
-    /* ---------- 5. Director de scroll ---------- */
+    /* ---------- 4. Director de scroll ---------- */
     const revealed = new WeakSet();
     function reveal(el) {
         if (!el || revealed.has(el)) return;
@@ -131,37 +128,19 @@
 
     function onScroll() {
         const hero = isInViewport(dHero);
-        const texto = isInViewport(dTexto);
         const clientes = isInViewport(dClientes);
-        const premios = isInViewport(dPremios);
         const servicios = isInViewport(dServicios);
         const footer = isInViewport(dFooter);
 
-        // escena del blob según la sección visible
-        if (hero) blob.setScene('hero');
-        else if (texto || clientes) blob.setScene('text');
-        else if (premios || servicios) blob.setScene('awards');
-        else if (footer) blob.setScene('footer');
-
-        // tema oscuro en hero, premios y footer
-        body.classList.toggle('dark', hero || premios || footer);
-
         // reveals (una sola vez)
-        if (texto) reveal(document.getElementById('text1'));
         if (clientes) {
             reveal(document.getElementById('collaborations'));
+            reveal(document.querySelector('.client-testimonials'));
             reveal(document.querySelector('.customer-clients'));
-        }
-        if (premios) {
-            reveal(document.getElementById('aa-title'));
-            reveal(document.getElementById('aa-loghi'));
-            reveal(document.getElementById('award-text'));
-            setTimeout(animateNumbers, 400);
         }
         if (servicios) {
             reveal(document.getElementById('services'));
-            ['work-1', 'work-2', 'work-3', 'work-4', 'social-media', 'branding', 'web-design', 'advertising']
-                .forEach((c) => reveal(document.querySelector('.' + c) || document.getElementById(c)));
+            document.querySelectorAll('.work').forEach(reveal);
         }
         if (footer) {
             reveal(document.getElementById('ftitle'));
@@ -171,12 +150,20 @@
         }
     }
 
-    window.addEventListener('scroll', onScroll, { passive: true });
-    window.addEventListener('resize', onScroll);
+    let scrollUpdateQueued = false;
+    function requestScrollUpdate() {
+        if (scrollUpdateQueued) return;
+        scrollUpdateQueued = true;
+        requestAnimationFrame(() => {
+            scrollUpdateQueued = false;
+            onScroll();
+        });
+    }
+    window.addEventListener('scroll', requestScrollUpdate, { passive: true });
+    window.addEventListener('resize', requestScrollUpdate);
 
     // arranque: hero visible con entrada escalonada
     reveal(document.getElementById('intro'));
-    blob.setScene('hero');
     onScroll();
 
     // hook de prueba/SEO: #scroll=1200 posiciona la página tras cargar
@@ -185,6 +172,7 @@
         setTimeout(() => {
             window.scrollTo({ top: parseInt(scrollMatch[1], 10), behavior: 'auto' });
             onScroll();
+            sceneController.update(false);
             requestAnimationFrame(onScroll);
             document.title = 'H' + document.documentElement.scrollHeight + ' Y' + window.scrollY;
         }, 400);
@@ -241,22 +229,25 @@
     /* ---------- 8. Botón magnético ---------- */
     const elm = document.getElementById('edit_button');
     if (elm && !reduced) {
-        // repulsión por velocidad de scroll
+        // Repulsión: solo trabaja cuando realmente ocurre scroll.
         let currentPixel = window.pageYOffset;
         const delta = window.innerWidth < 480 ? 0 : 5;
-        (function looper() {
+        function updateScrollButton() {
             const newPixel = window.pageYOffset;
             const diff = newPixel - currentPixel;
             const speed = diff * delta;
             elm.style.top = -speed + 'px';
             currentPixel = newPixel;
-            requestAnimationFrame(looper);
-        })();
+            requestAnimationFrame(() => { elm.style.top = '0px'; });
+        }
+        if (delta) {
+            window.addEventListener('scroll', updateScrollButton, { passive: true });
+        }
 
-        // atracción magnética al puntero
-        let cX = -9999, cY = -9999;
-        document.addEventListener('mousemove', (e) => { cX = e.clientX; cY = e.clientY; }, { passive: true });
-        (function magnetic() {
+        // Atracción magnética: se calcula solo cuando se mueve el puntero.
+        let cX = -9999, cY = -9999, magneticQueued = false;
+        function updateMagnetic() {
+            magneticQueued = false;
             const bound = elm.getBoundingClientRect();
             const diagonal = Math.sqrt(bound.width * bound.width + bound.height * bound.height);
             const centerX = bound.width / 2 + bound.x;
@@ -271,13 +262,23 @@
             } else {
                 elm.style.transform = '';
             }
-            requestAnimationFrame(magnetic);
-        })();
+        }
+        document.addEventListener('mousemove', (e) => {
+            cX = e.clientX;
+            cY = e.clientY;
+            if (!magneticQueued) {
+                magneticQueued = true;
+                requestAnimationFrame(updateMagnetic);
+            }
+        }, { passive: true });
+        document.addEventListener('mouseleave', () => {
+            elm.style.transform = '';
+        });
     }
 
     /* ---------- 9. Tintes sociales ---------- */
     const social = document.querySelectorAll('.footer-box-right li a');
-    const tints = ['tint-fb', 'tint-ig', 'tint-in'];
+    const tints = ['tint-fb', 'tint-ig', 'tint-tiktok'];
     social.forEach((a, i) => {
         a.addEventListener('mouseover', () => body.classList.add(tints[i] || ''));
         a.addEventListener('mouseout', () => body.classList.remove(tints[i] || ''));
@@ -293,4 +294,9 @@
         e.preventDefault();
         window.scrollTo({ top: 0, behavior: reduced ? 'auto' : 'smooth' });
     });
+
+    }
+
+    if (window.__CONTENT_READY__) startMain();
+    else window.addEventListener('site:content-ready', startMain, { once: true });
 })();

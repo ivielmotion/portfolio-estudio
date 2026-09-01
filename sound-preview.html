@@ -1,0 +1,221 @@
+<!doctype html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Prueba de sonidos — Portfolio</title>
+    <style>
+        :root {
+            color-scheme: dark;
+            font-family: Arial, sans-serif;
+            background: #0b0711;
+            color: #fff;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            min-height: 100vh;
+            margin: 0;
+            display: grid;
+            place-items: center;
+            padding: 24px;
+        }
+
+        main {
+            width: min(680px, 100%);
+        }
+
+        h1 {
+            margin: 0 0 8px;
+            font-size: clamp(28px, 6vw, 52px);
+        }
+
+        p {
+            color: #c9c3d0;
+            line-height: 1.5;
+        }
+
+        .sounds {
+            display: grid;
+            gap: 12px;
+            margin-top: 28px;
+        }
+
+        button {
+            width: 100%;
+            border: 1px solid #69447a;
+            border-radius: 14px;
+            padding: 18px;
+            display: grid;
+            grid-template-columns: 52px 1fr;
+            gap: 14px;
+            align-items: center;
+            color: inherit;
+            background: #17101f;
+            text-align: left;
+            cursor: pointer;
+        }
+
+        button:hover,
+        button:focus-visible {
+            border-color: #db45c9;
+            background: #21142c;
+            outline: none;
+        }
+
+        .play {
+            width: 46px;
+            height: 46px;
+            border-radius: 50%;
+            display: grid;
+            place-items: center;
+            background: #db45c9;
+            color: #140b19;
+            font-size: 19px;
+        }
+
+        strong {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 17px;
+        }
+
+        small {
+            color: #bdb3c5;
+            font-size: 14px;
+        }
+
+        .recommended {
+            color: #f377df;
+            font-size: 12px;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: .08em;
+        }
+
+        footer {
+            margin-top: 24px;
+            color: #908798;
+            font-size: 13px;
+        }
+    </style>
+</head>
+<body>
+    <main>
+        <h1>Elige el sonido</h1>
+        <p>Pulsa cada opción. Son sonidos creados por el navegador: no usan
+            librerías ni descargan archivos.</p>
+
+        <div class="sounds">
+            <button type="button" data-sound="morph">
+                <span class="play" aria-hidden="true">▶</span>
+                <span>
+                    <span class="recommended">Recomendado</span>
+                    <strong>Expansión suave</strong>
+                    <small>Aire corto y profundo para esfera → partículas.</small>
+                </span>
+            </button>
+
+            <button type="button" data-sound="pulse">
+                <span class="play" aria-hidden="true">▶</span>
+                <span>
+                    <strong>Pulso digital</strong>
+                    <small>Golpe breve para un futuro clic sobre la esfera.</small>
+                </span>
+            </button>
+
+            <button type="button" data-sound="crystal">
+                <span class="play" aria-hidden="true">▶</span>
+                <span>
+                    <strong>Partículas cristalinas</strong>
+                    <small>Destellos agudos; más visible y menos discreto.</small>
+                </span>
+            </button>
+        </div>
+
+        <footer>Este probador es independiente y no entra en la web publicada.</footer>
+    </main>
+
+    <script>
+        let context;
+
+        function audio() {
+            context ||= new (window.AudioContext || window.webkitAudioContext)();
+            if (context.state === 'suspended') context.resume();
+            return context;
+        }
+
+        function tone(ctx, start, duration, from, to, volume, type = 'sine') {
+            const oscillator = ctx.createOscillator();
+            const gain = ctx.createGain();
+            oscillator.type = type;
+            oscillator.frequency.setValueAtTime(from, start);
+            oscillator.frequency.exponentialRampToValueAtTime(to, start + duration);
+            gain.gain.setValueAtTime(0.0001, start);
+            gain.gain.exponentialRampToValueAtTime(volume, start + 0.025);
+            gain.gain.exponentialRampToValueAtTime(0.0001, start + duration);
+            oscillator.connect(gain).connect(ctx.destination);
+            oscillator.start(start);
+            oscillator.stop(start + duration + 0.02);
+        }
+
+        function noise(ctx, start, duration, volume) {
+            const buffer = ctx.createBuffer(1, ctx.sampleRate * duration, ctx.sampleRate);
+            const data = buffer.getChannelData(0);
+            for (let i = 0; i < data.length; i++) {
+                const fade = Math.sin(Math.PI * i / data.length);
+                data[i] = (Math.random() * 2 - 1) * fade;
+            }
+
+            const source = ctx.createBufferSource();
+            const filter = ctx.createBiquadFilter();
+            const gain = ctx.createGain();
+            source.buffer = buffer;
+            filter.type = 'bandpass';
+            filter.frequency.setValueAtTime(260, start);
+            filter.frequency.exponentialRampToValueAtTime(1500, start + duration * 0.7);
+            filter.Q.value = 0.7;
+            gain.gain.setValueAtTime(0.0001, start);
+            gain.gain.exponentialRampToValueAtTime(volume, start + 0.08);
+            gain.gain.exponentialRampToValueAtTime(0.0001, start + duration);
+            source.connect(filter).connect(gain).connect(ctx.destination);
+            source.start(start);
+        }
+
+        const sounds = {
+            morph(ctx) {
+                const now = ctx.currentTime + 0.02;
+                noise(ctx, now, 0.62, 0.09);
+                tone(ctx, now, 0.58, 170, 72, 0.085, 'sine');
+                tone(ctx, now + 0.08, 0.44, 410, 210, 0.025, 'triangle');
+            },
+            pulse(ctx) {
+                const now = ctx.currentTime + 0.02;
+                tone(ctx, now, 0.16, 230, 82, 0.12, 'sine');
+                tone(ctx, now, 0.08, 760, 320, 0.035, 'square');
+            },
+            crystal(ctx) {
+                const now = ctx.currentTime + 0.02;
+                [740, 980, 1240, 1660].forEach((frequency, index) => {
+                    tone(
+                        ctx,
+                        now + index * 0.065,
+                        0.32,
+                        frequency,
+                        frequency * 1.16,
+                        0.035,
+                        'sine'
+                    );
+                });
+            }
+        };
+
+        document.querySelectorAll('[data-sound]').forEach((button) => {
+            button.addEventListener('click', () => {
+                sounds[button.dataset.sound](audio());
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Proyecto — ESTUDIO</title>
+    <meta name="description" content="Detalle de proyecto seleccionado del estudio." />
+    <script>
+        try {
+            var projectTransition = JSON.parse(
+                sessionStorage.getItem('projectTransition') || 'null'
+            );
+            if (projectTransition) {
+                document.documentElement.classList.add('is-project-transitioning');
+            }
+        } catch (error) {}
+    </script>
+    <link rel="icon" type="image/png" href="assets/favicon.png" />
+    <link rel="dns-prefetch" href="//player.vimeo.com" />
+    <link rel="preconnect" href="https://player.vimeo.com" crossorigin />
+    <script src="https://player.vimeo.com/api/player.js" defer></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,900&family=Lato:wght@400;700;900&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="css/project.css" />
+</head>
+<body class="mainBody project-page theme-option-a" data-page="project">
+
+    <div class="pj-entry-cover" id="pjEntryCover" aria-hidden="true"></div>
+
+    <!-- Mismo fondo interactivo del Portfolio: no se recarga otro fondo
+         al abrir un proyecto y la transición usa un fundido limpio. -->
+    <canvas id="fluid-grid" aria-hidden="true"></canvas>
+    <div class="fallback-grid" aria-hidden="true"></div>
+
+    <!-- Logotipo fijo superior alineado con el borde del contenedor .box -->
+    <!-- Contenido del proyecto adaptado al ancho estricto de la web (.box) -->
+    <main class="container">
+        <div class="box project-detail" id="projectContainer" aria-live="polite">
+            <p class="pj-loading">Cargando experiencia del proyecto…</p>
+        </div>
+    </main>
+
+    <!-- Cursor personalizado -->
+    <div class="cursor" aria-hidden="true">
+        <div class="cursor__inner cursor-circle"></div>
+        <div class="cursor__inner cursor-dot"></div>
+    </div>
+
+    <script src="js/particles.config.js"></script>
+    <script src="js/fluid-grid.js"></script>
+    <script src="js/cursor.js"></script>
+    <script src="js/project.js"></script>
+</body>
+</html>

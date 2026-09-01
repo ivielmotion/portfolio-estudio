@@ -26,15 +26,21 @@
     var lastDot = { x: -100, y: -100 };
     var lastCirc = { x: -100, y: -100 };
     var scale = 1, lastScale = 1, opacity = 1, lastOpacity = 1;
+    var raf = 0;
 
     window.addEventListener('mousemove', function (e) {
-        mouse.x = e.clientX + window.scrollX;
-        mouse.y = e.clientY + window.scrollY;
+        mouse.x = e.clientX;
+        mouse.y = e.clientY;
+        requestRender();
     }, { passive: true });
 
     function lerp(a, b, n) { return (1 - n) * a + n * b; }
+    function requestRender() {
+        if (!raf) raf = requestAnimationFrame(render);
+    }
 
     function render() {
+        raf = 0;
         lastDot.x = lerp(lastDot.x, mouse.x - (dotB.width / lastScale) / 2, 1);
         lastDot.y = lerp(lastDot.y, mouse.y - (dotB.height / lastScale) / 2, 1);
         lastCirc.x = lerp(lastCirc.x, mouse.x - (circB.width * lastScale) / 2, 0.15);
@@ -48,13 +54,22 @@
         circle.style.opacity = lastOpacity;
         dot.style.width = (dotB.width / lastScale) + 'px';
         dot.style.height = (dotB.height / lastScale) + 'px';
-        requestAnimationFrame(render);
+
+        var moving = Math.abs(lastCirc.x - (mouse.x - (circB.width * lastScale) / 2)) > 0.15 ||
+            Math.abs(lastCirc.y - (mouse.y - (circB.height * lastScale) / 2)) > 0.15 ||
+            Math.abs(lastScale - scale) > 0.01 ||
+            Math.abs(lastOpacity - opacity) > 0.01;
+        if (moving) requestRender();
     }
-    requestAnimationFrame(render);
+    requestRender();
 
     document.querySelectorAll('a, button, [cursor-hover], #ftitle, #close_form, #edit_button, .contact_submit').forEach(function (link) {
-        link.addEventListener('mouseenter', function () { scale = 2; });
-        link.addEventListener('mouseleave', function () { scale = 1; });
-        link.addEventListener('click', function () { lastScale = 1; lastOpacity = 0; });
+        link.addEventListener('mouseenter', function () { scale = 2; requestRender(); });
+        link.addEventListener('mouseleave', function () { scale = 1; requestRender(); });
+        link.addEventListener('click', function () {
+            lastScale = 1;
+            lastOpacity = 0;
+            requestRender();
+        });
     });
 })();

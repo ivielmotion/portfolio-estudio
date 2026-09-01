@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>About — ESTUDIO</title>
+    <meta name="description" content="Conoce el enfoque, el perfil y la forma de trabajo del estudio." />
+    <link rel="icon" type="image/png" href="assets/favicon.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..900;1,6..96,400..900&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400;1,600&family=DM+Sans:ital,wght@0,400;0,500;0,700;1,400&family=EB+Garamond:ital,wght@0,400;0,600;1,400;1,600&family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;1,9..144,400&family=Instrument+Serif:ital@0;1&family=Manrope:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;1,400;1,600&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Poppins:ital,wght@0,400;0,600;1,400&family=Sora:wght@400;600;700&family=Space+Grotesk:wght@400;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="css/about.css" />
+</head>
+<body class="mainBody about-page theme-option-a" data-page="about">
+
+    <!-- La forma de partículas es independiente de las secciones del Home. -->
+    <div id="blob_container" aria-hidden="true"></div>
+
+    <header class="site-header">
+        <div class="header-inner">
+            <div class="site-header__row">
+                <nav class="site-header__nav" aria-label="Navegación principal">
+                    <a class="site-header__link" href="index.html" cursor-hover>GIF</a>
+                    <a class="site-header__link" href="portfolio.html" cursor-hover>Trabajos</a>
+                </nav>
+                <div class="about-topnav">
+                    <a href="index.html" aria-label="Volver a la home" cursor-hover>
+                        <img src="assets/logo-color-small.png" alt="logotipo" />
+                    </a>
+                </div>
+                <nav class="site-header__nav site-header__nav--right" aria-label="Enlaces del estudio">
+                    <a class="site-header__link" href="about.html" aria-current="page" cursor-hover>About</a>
+                    <a class="site-header__link" href="#about-contact" cursor-hover>Contact</a>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <main class="about-main">
+        <section class="about-hero">
+            <div class="about-section__inner">
+                <p class="about-eyebrow" id="aboutEyebrow">ABOUT / ESTUDIO</p>
+                <h1 class="about-hero__title">
+                    <span class="font-ui" id="aboutTitleSans">Ideas que</span>
+                    <span class="font-editorial" id="aboutTitleEditorial">se mueven.</span>
+                </h1>
+                <p class="about-hero__intro" id="aboutIntro">
+                    Soy Ivan Ariel, creativo digital. Diseño identidades, experiencias web y piezas audiovisuales que conectan con las personas.
+                </p>
+                <a class="about-jump" href="#about-profile" cursor-hover>
+                    <span>conocer el estudio</span><span aria-hidden="true">↓</span>
+                </a>
+            </div>
+        </section>
+
+        <section class="about-section about-section--profile" id="about-profile">
+            <div class="about-section__inner about-grid">
+                <p class="about-label">Quién soy</p>
+                <div class="about-profile__content">
+                    <p class="about-profile__bio" id="aboutBio">
+                        Trabajo entre la dirección creativa, el diseño y la tecnología para convertir ideas en experiencias claras, expresivas y memorables.
+                    </p>
+                    <ul class="about-facts" id="aboutFacts" aria-label="Perfil del estudio">
+                        <li><span>Perfil</span><strong>Dirección creativa digital</strong></li>
+                        <li><span>Especialidad</span><strong>Branding, web y motion</strong></li>
+                        <li><span>Forma de trabajo</span><strong>Colaborativa y cercana</strong></li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <section class="about-section about-section--principles">
+            <div class="about-section__inner">
+                <div class="about-section__heading">
+                    <p class="about-label">Cómo trabajo</p>
+                    <h2>Una idea sólida también debe sentirse.</h2>
+                </div>
+                <div class="about-principles" id="aboutPrinciples">
+                    <article>
+                        <span class="about-principle__number">01.</span>
+                        <h3>Claridad</h3>
+                        <p>Ordenar lo complejo para que el mensaje llegue sin perder personalidad.</p>
+                    </article>
+                    <article>
+                        <span class="about-principle__number">02.</span>
+                        <h3>Movimiento</h3>
+                        <p>Dar ritmo a la identidad para que también funcione en pantalla y en el tiempo.</p>
+                    </article>
+                    <article>
+                        <span class="about-principle__number">03.</span>
+                        <h3>Detalle</h3>
+                        <p>Cuidar cada decisión visual, desde la primera impresión hasta la última interacción.</p>
+                    </article>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="about-contact" id="about-contact">
+        <div class="about-contact__inner footer-inner">
+            <div class="about-contact__intro">
+                <p class="about-eyebrow">¿Hablamos?</p>
+                <h2 class="about-contact__title"><span class="font-ui">Hagamos algo </span><span class="font-editorial">memorable.</span></h2>
+                <a class="about-contact__cta" id="aboutContactCta" href="mailto:hola@tumarca.com" cursor-hover>
+                    <span>Comenzar proyecto</span><span aria-hidden="true">→</span>
+                </a>
+            </div>
+            <div class="about-contact__details">
+                <address id="aboutContactAddress">Tu Estudio</address>
+                <div>
+                    <a id="aboutContactMail" href="mailto:info@ivanariel.me" cursor-hover>info@ivanariel.me</a>
+                    <a id="aboutContactPhone" href="tel:77050026" cursor-hover>77050026</a>
+                </div>
+                <nav id="aboutContactSocial" aria-label="Redes sociales"></nav>
+            </div>
+        </div>
+    </footer>
+
+    <div class="cursor" aria-hidden="true">
+        <div class="cursor__inner cursor-circle"></div>
+        <div class="cursor__inner cursor-dot"></div>
+    </div>
+
+    <script src="js/audio.js"></script>
+    <script src="js/particles.config.js"></script>
+    <script src="js/blob.js"></script>
+    <script src="js/cursor.js"></script>
+    <script src="js/about.js"></script>
+</body>
+</html>

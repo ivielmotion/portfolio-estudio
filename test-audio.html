@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <title>Test Audio Directo</title>
+    <style>
+        body { background: #0b0711; color: #fff; font-family: Arial, sans-serif; padding: 40px; }
+        button { padding: 20px 40px; margin: 10px; font-size: 18px; cursor: pointer; background: #db45c9; border: none; border-radius: 8px; color: #140b19; }
+        #log { margin-top: 30px; font-family: monospace; color: #00ff88; line-height: 1.6; }
+        .error { color: #ff4444; }
+        .ok { color: #00ff88; }
+    </style>
+</head>
+<body>
+    <h1>Test Directo de Audio</h1>
+    <p>Haz click en los botones. Si no escuchas nada, copia el texto del recuadro verde y pégamelo.</p>
+    <button id="btn-init">1. INICIALIZAR AUDIO</button>
+    <button id="btn-click">2. TEST CLICK</button>
+    <button id="btn-spiral">3. TEST SPIRAL</button>
+    <button id="btn-hover" style="background:#69447a;color:#fff">4. PASA EL RATÓN AQUÍ</button>
+    <div id="log"></div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.2.4/howler.min.js"></script>
+    <script>
+        const log = document.getElementById('log');
+        function add(msg, isError) {
+            const line = document.createElement('div');
+            line.textContent = '[' + new Date().toLocaleTimeString() + '] ' + msg;
+            line.className = isError ? 'error' : 'ok';
+            log.appendChild(line);
+            console.log(msg);
+        }
+
+        add('Howler cargado: ' + (typeof Howl !== 'undefined'));
+        add('Howler versión: ' + (Howler && Howler.version || 'unknown'));
+
+        const BASE = './sounds/';
+        let sounds = {};
+
+        document.getElementById('btn-init').onclick = function() {
+            try {
+                sounds.click = new Howl({ src: [BASE + 'click.ogg'], volume: 1.0, html5: true });
+                sounds.spiral = new Howl({ src: [BASE + 'spiral.ogg'], volume: 1.0, html5: true });
+                sounds.hover = new Howl({ src: [BASE + 'hover.ogg'], volume: 1.0, html5: true });
+
+                sounds.click.on('load', () => add('click.ogg CARGADO', false));
+                sounds.click.on('loaderror', (id, err) => add('click.ogg ERROR: ' + err, true));
+                sounds.click.on('playerror', (id, err) => add('click.ogg PLAY ERROR: ' + err, true));
+
+                sounds.spiral.on('load', () => add('spiral.ogg CARGADO', false));
+                sounds.hover.on('load', () => add('hover.ogg CARGADO', false));
+
+                add('Sonidos inicializados. Esperando carga...', false);
+            } catch(e) {
+                add('ERROR al crear: ' + e.message, true);
+            }
+        };
+
+        document.getElementById('btn-click').onclick = function() {
+            if (!sounds.click) { add('Primero haz click en INICIALIZAR', true); return; }
+            const id = sounds.click.play();
+            add('CLICK play() devolvió ID: ' + id, false);
+        };
+
+        document.getElementById('btn-spiral').onclick = function() {
+            if (!sounds.spiral) { add('Primero haz click en INICIALIZAR', true); return; }
+            const id = sounds.spiral.play();
+            add('SPIRAL play() devolvió ID: ' + id, false);
+        };
+
+        document.getElementById('btn-hover').onmouseenter = function() {
+            if (!sounds.hover) { add('Primero haz click en INICIALIZAR', true); return; }
+            const id = sounds.hover.play();
+            add('HOVER play() devolvió ID: ' + id, false);
+        };
+    </script>
+</body>
+</html>

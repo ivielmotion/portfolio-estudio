@@ -5,28 +5,77 @@
   },
   "hero": {
     "lines": [
-      "Bienvenido Me llamo",
-      "Ivan Ariel"
+      "<span class=\"font-ui\">Bienvenido</span> <span class=\"font-ui\">Me llamo</span>",
+      "<span class=\"font-editorial\">Ivan Ariel</span>"
     ]
   },
   "about": {
-    "paragraphs": [
-      "Somos un estudio creativo digital independiente, especializado en branding, diseño web y advertising.",
-      "Un laboratorio dedicado a sus clientes con estilo propio, atención al detalle y cuidado artesanal."
+    "eyebrow": "ABOUT / ESTUDIO",
+    "titleSans": "Ideas que",
+    "titleEditorial": "se mueven.",
+    "intro": "Soy Ivan Ariel, creativo digital. Diseño identidades, experiencias web y piezas audiovisuales que conectan con las personas.",
+    "bio": "Trabajo entre la dirección creativa, el diseño y la tecnología para convertir ideas en experiencias claras, expresivas y memorables.",
+    "facts": [
+      {
+        "label": "Perfil",
+        "value": "Dirección creativa digital"
+      },
+      {
+        "label": "Especialidad",
+        "value": "Branding, web y motion"
+      },
+      {
+        "label": "Forma de trabajo",
+        "value": "Colaborativa y cercana"
+      }
+    ],
+    "principles": [
+      {
+        "number": "01.",
+        "title": "Claridad",
+        "text": "Ordenar lo complejo para que el mensaje llegue sin perder personalidad."
+      },
+      {
+        "number": "02.",
+        "title": "Movimiento",
+        "text": "Dar ritmo a la identidad para que también funcione en pantalla y en el tiempo."
+      },
+      {
+        "number": "03.",
+        "title": "Detalle",
+        "text": "Cuidar cada decisión visual, desde la primera impresión hasta la última interacción."
+      }
     ]
   },
   "clients": {
-    "title": "clientes",
+    "title": "recomendaciones",
+    "testimonials": [
+      {
+        "quote": "He disfrutado mucho trabajando con Ivan; le dimos muy poco y ha logrado muchísimo con el vídeo. Ya estamos planeando su próximo proyecto.",
+        "name": "Simon James",
+        "role": "Director en Intechnique"
+      },
+      {
+        "quote": "El trabajo de Ivan es totalmente original y de excelente diseño. ¡Logró crear una animación para mi pantalla de inicio mejor de lo que jamás hubiera imaginado!",
+        "name": "Jordán",
+        "role": "Propietario de GoFlex"
+      },
+      {
+        "quote": "Un auténtico profesional, un inversor en acción. Excelentes habilidades interpersonales. Paciente y amable.",
+        "name": "Ashra",
+        "role": "Propietaria Spa Ashra"
+      }
+    ],
     "items": [
       {
         "name": "NOVA",
         "logo": "",
-        "style": "font-weight:900"
+        "style": "font-weight:900; letter-spacing: 2px;"
       },
       {
         "name": "Kaizen",
         "logo": "",
-        "style": "font-family:'Fraunces',serif"
+        "style": "font-family: var(--font-editorial); font-style: italic;"
       },
       {
         "name": "LUMEN",
@@ -46,7 +95,7 @@
       {
         "name": "Ondine",
         "logo": "",
-        "style": "font-family:'Fraunces',serif;font-style:italic"
+        "style": "font-family: var(--font-editorial); font-style:italic;"
       },
       {
         "name": "PRISMA",
@@ -66,7 +115,7 @@
       {
         "name": "Casa Río",
         "logo": "",
-        "style": "font-family:'Fraunces',serif"
+        "style": "font-family: var(--font-editorial);"
       },
       {
         "name": "MAREA",
@@ -80,117 +129,235 @@
       }
     ]
   },
-  "awards": {
-    "title": "premios y reconocimientos",
-    "text": "Cada proyecto es un reto al que no sabemos renunciar.",
-    "items": [
-      {
-        "name": "awwwards",
-        "count": 2
-      },
-      {
-        "name": "cssda",
-        "count": 4
-      },
-      {
-        "name": "csswinner",
-        "count": 1
-      }
-    ]
-  },
   "services": {
     "title": "servicios",
     "groups": [
       {
-        "id": "branding",
-        "name": "Branding",
+        "id": "video-motion",
+        "number": "01.",
+        "name": "<span class=\"font-ui\">Video &amp;</span> <span class=\"font-editorial\">Motion</span>",
+        "description": "Comunicación visual dinámica para marcas, productos y contenidos digitales.",
         "items": [
-          "Análisis y estrategia",
-          "Dirección creativa",
-          "Dirección de arte",
-          "Identidad visual",
-          "Tono de voz",
-          "Naming",
-          "Copywriting",
-          "Storytelling",
-          "Producción foto y vídeo",
-          "Ilustración"
+          "Edición de Video",
+          "Motion Graphics"
         ]
       },
       {
-        "id": "web-design",
-        "name": "Diseño Web",
+        "id": "web-apps",
+        "number": "02.",
+        "name": "<span class=\"font-ui\">Web &amp;</span> <span class=\"font-editorial\">Apps</span>",
+        "description": "Soluciones digitales que integran experiencia, tecnología e inteligencia artificial.",
         "items": [
-          "Landing pages",
-          "Sitios web",
-          "eCommerce",
-          "Apps web",
-          "UI / UX",
-          "Integración API",
-          "Dirección técnica"
+          "Diseño Web",
+          "Diseño de Apps",
+          "UI/UX"
         ]
       },
       {
-        "id": "advertising",
-        "name": "Advertising",
+        "id": "digital-ads",
+        "number": "03.",
+        "name": "<span class=\"font-ui\">Digital</span> <span class=\"font-editorial\">Ads</span>",
+        "description": "Estrategias de comunicación diseñadas para impulsar objetivos comerciales.",
         "items": [
-          "Campañas publicitarias",
-          "SEO",
-          "SEM",
-          "Google Ads",
-          "Social Ads"
-        ]
-      },
-      {
-        "id": "social-media",
-        "name": "Social Media",
-        "items": [
-          "Estrategia",
-          "Gestión de redes",
-          "Community management"
+          "Diseño Gráfico",
+          "Meta Ads"
         ]
       }
     ]
   },
   "contact": {
     "cta": [
-      "inicia",
-      "un",
-      "proyecto"
+      "<span class=\"font-ui\">inicia</span>",
+      "<span class=\"font-ui\">un</span>",
+      "<span class=\"font-editorial\">proyecto</span>"
     ],
-    "address": "Tu Estudio\nCalle Ejemplo, 0\n00000 - Tu Ciudad",
-    "email": "hola@tumarca.com",
-    "phone": "+00 000 000 000",
+    "address": "Tu Estudio",
+    "email": "info@ivanariel.me",
+    "phone": "77050026",
     "social": [
       {
         "name": "Facebook",
-        "url": "https://www.facebook.com/"
+        "url": "https://www.facebook.com/ivanarields"
       },
       {
         "name": "Instagram",
-        "url": "https://www.instagram.com/"
+        "url": "https://www.instagram.com/ivanarields/"
       },
       {
-        "name": "LinkedIn",
-        "url": "https://www.linkedin.com/"
+        "name": "TikTok",
+        "url": "https://www.tiktok.com/@ivanarields"
       }
     ]
   },
   "portfolio": [
     {
-      "title": "Proyecto ejemplo 1",
-      "year": "2026",
-      "image": "",
-      "url": "https://example.com",
-      "video": "",
+      "id": "codificacion-industrial",
+      "title": "Codificación Industrial",
+      "subtitle": "Una pieza audiovisual sobre precisión, lectura de datos y movimiento industrial.",
+      "category": "Video & Motion",
+      "client": "Proyecto propio",
+      "role": "Dirección, edición y motion graphics",
+      "year": "2023",
+      "description": "Codificación Industrial transforma procesos técnicos, señales y estructuras de producción en una narrativa visual clara y dinámica. La pieza combina ritmo, tipografía y detalle mecánico para presentar la tecnología desde una mirada contemporánea.",
+      "format": "portrait",
+      "tags": ["video", "motion", "ads"],
+      "image": "https://i.vimeocdn.com/video/1703006267-5830b68f002d98b373a3d2a1a8527ea23460b003cd91cff032728532dd826c18-d?mw=1600&q=85",
+      "poster": "https://i.vimeocdn.com/video/1703006267-5830b68f002d98b373a3d2a1a8527ea23460b003cd91cff032728532dd826c18-d?mw=1600&q=85",
+      "video": "https://vimeo.com/849088364?h=14e2ac0cd8",
+      "url": "https://vimeo.com/849088364",
+      "caseLabel": "ver el proyecto",
+      "gallery": [
+        {
+          "image": "assets/projects/codificacion-industrial-01.svg",
+          "alt": "Sistema visual de control y codificación industrial",
+          "caption": "Lenguaje visual inspirado en interfaces de control, lectura y precisión."
+        },
+        {
+          "image": "assets/projects/codificacion-industrial-02.svg",
+          "alt": "Flujo gráfico de datos industriales",
+          "caption": "Secuencia de datos, módulos y conexiones dentro del proceso."
+        },
+        {
+          "image": "assets/projects/codificacion-industrial-03.svg",
+          "alt": "Composición tipográfica del proyecto Codificación Industrial",
+          "caption": "Cierre gráfico construido con contraste, ritmo y señalética técnica."
+        }
+      ],
       "visible": true
     },
     {
-      "title": "Proyecto ejemplo 2",
+      "id": "paths-of-life",
+      "title": "Paths of Life",
+      "subtitle": "Exploración rítmica y narrativa tridimensional sobre la trascendencia del movimiento.",
+      "category": "Motion & Sound Narrative",
+      "client": "Atelier Lumiere",
+      "role": "Dirección Creativa, 3D & Sound Design",
       "year": "2025",
+      "description": "Paths of Life es una pieza cinematográfica experimental que combina dinámicas de fluidos, partículas orgánicas y animación 3D. Diseñada como una experiencia inmersiva, explora las intersecciones entre la estética orgánica y el diseño sonoro reactivo.",
+      "format": "portrait",
+      "tags": ["motion", "3d", "sound"],
       "image": "",
-      "url": "https://example.com",
+      "video": "https://vimeo.com/76979871",
+      "url": "",
+      "gallery": [
+        { "caption": "Desglose de simulación de partículas e iluminación en entorno oscuro." },
+        { "caption": "Estudio compositivo de geometría en movimiento." }
+      ],
+      "visible": true
+    },
+    {
+      "id": "nova-branding",
+      "title": "NOVA Identity",
+      "subtitle": "Sistema de identidad visual dinámica para plataforma tecnológica global.",
+      "category": "Branding & Visual System",
+      "client": "NOVA Global",
+      "role": "Brand Identity & Digital Design",
+      "year": "2025",
+      "description": "Desarrollo integral de marca y sistema de diseño adaptativo. Construido sobre principios de tipografía suiza contemporánea y paletas de alto contraste para aplicaciones digitales e impresas.",
+      "format": "square",
+      "tags": ["branding", "design"],
+      "image": "",
       "video": "",
+      "url": "",
+      "gallery": [
+        { "caption": "Manual de aplicación de marca y sistema cromático." },
+        { "caption": "Layouts editoriales y tipografía corporativa." }
+      ],
+      "visible": true
+    },
+    {
+      "id": "lumen-digital",
+      "title": "LUMEN Architecture",
+      "subtitle": "Experiencia web inmersiva para estudio internacional de iluminación.",
+      "category": "Web & Experience",
+      "client": "LUMEN Studio",
+      "role": "Web Design & UI/UX",
+      "year": "2026",
+      "description": "Una interfaz web refinada que resalta proyectos arquitectónicos mediante interacciones fluidas, transiciones de luz y tipografía editorial de gran formato.",
+      "format": "tall",
+      "tags": ["web", "uiux"],
+      "image": "",
+      "video": "",
+      "url": "",
+      "gallery": [
+        { "caption": "Retícula interactiva de navegación." }
+      ],
+      "visible": true
+    },
+    {
+      "id": "atelier-motion",
+      "title": "Atelier Motion",
+      "subtitle": "Campañas audiovisuales de alto impacto para lanzamiento de producto.",
+      "category": "Video & Motion Graphics",
+      "client": "Atelier Paris",
+      "role": "Motion Graphics & Animation",
+      "year": "2025",
+      "description": "Secuencia de piezas promocionales en movimiento que combinan tipografía cinética con ritmos electroacústicos, optimizadas para plataformas digitales y publicidad exterior.",
+      "format": "tall",
+      "tags": ["video", "motion"],
+      "image": "",
+      "video": "",
+      "url": "",
+      "gallery": [
+        { "caption": "Frames clave de animación cinética." }
+      ],
+      "visible": true
+    },
+    {
+      "id": "kaizen-app",
+      "title": "Kaizen App Interface",
+      "subtitle": "Aplicación móvil centrada en la productividad consciente y hábitos diarios.",
+      "category": "App & Product Design",
+      "client": "Kaizen Labs",
+      "role": "Product Design & UI/UX",
+      "year": "2025",
+      "description": "Diseño de producto minimalista centrado en la usabilidad y la reducción de carga cognitiva. Integración de micro-interacciones sutiles y arquitectura de datos limpia.",
+      "format": "portrait",
+      "tags": ["app", "uiux"],
+      "image": "",
+      "video": "",
+      "url": "",
+      "gallery": [
+        { "caption": "Flujos de usuario y micro-interacciones." }
+      ],
+      "visible": true
+    },
+    {
+      "id": "voltio-campaign",
+      "title": "VOLTIO Campaign",
+      "subtitle": "Estrategia de comunicación visual y Meta Ads para marca disruptiva.",
+      "category": "Digital Ads & Campaigns",
+      "client": "VOLTIO Energy",
+      "role": "Art Direction & Ad Design",
+      "year": "2026",
+      "description": "Campaña publicitaria multiplataforma estructurada para maximizar conversión y pregnancia de marca mediante piezas estáticas y dinámicas de alto dinamismo.",
+      "format": "square",
+      "tags": ["ads", "branding"],
+      "image": "",
+      "video": "",
+      "url": "",
+      "gallery": [
+        { "caption": "Variaciones de campaña publicitaria." }
+      ],
+      "visible": true
+    },
+    {
+      "id": "prisma-identity",
+      "title": "PRISMA Design System",
+      "subtitle": "Guía de estilo y sistema de componentes para soluciones digitales.",
+      "category": "Design System",
+      "client": "PRISMA Tech",
+      "role": "System Architecture & UI Design",
+      "year": "2025",
+      "description": "Librería completa de componentes reutilizables, tokens de diseño y guías de interacción para escalar aplicaciones web y productos digitales contemporáneos.",
+      "format": "square",
+      "tags": ["design", "system"],
+      "image": "",
+      "video": "",
+      "url": "",
+      "gallery": [
+        { "caption": "Biblioteca de tokens de color e iconos." }
+      ],
       "visible": true
     }
   ]

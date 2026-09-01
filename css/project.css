@@ -5,10 +5,17 @@
    ============================================================ */
 
 body.project-page {
-    background-color: #f0f1fa;
+    background-color: var(--brand-bg);
     color: var(--brand-ink);
     min-height: 100%;
     overflow-x: hidden;
+}
+
+/* La página de proyecto comparte el mismo fondo híbrido del Portfolio:
+   puntos amplios, limpios y discretos detrás del contenido. */
+.project-page #fluid-grid,
+.project-page .fallback-grid {
+    opacity: 0.5;
 }
 
 body.project-page main.container {

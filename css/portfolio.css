@@ -4,8 +4,26 @@
    ============================================================ */
 
 .portfolio-page {
-    background-color: #f0f1fa;
+    background-color: var(--brand-bg);
     color: var(--brand-ink);
+}
+
+/* Portfolio y proyecto comparten el mismo fondo sin competir con el
+   contenido. */
+.portfolio-page #fluid-grid,
+.portfolio-page .fallback-grid,
+.project-page #fluid-grid,
+.project-page .fallback-grid {
+    opacity: 0.5;
+}
+
+/* En el modo claro los enlaces siguen siendo discretos, pero legibles. */
+.portfolio-page .site-header__link {
+    opacity: 0.62;
+}
+
+.portfolio-page .site-header__link:is(:hover, :focus-visible) {
+    opacity: 0.95;
 }
 
 /* Las reglas del fondo (#fluid-grid y .fallback-grid) son comunes
@@ -135,7 +153,7 @@
     inset: 0;
     z-index: 1000;
     pointer-events: none;
-    background: #f0f1fa;
+    background: var(--brand-bg);
     will-change: opacity;
 }
 
@@ -145,7 +163,7 @@
     inset: 0;
     z-index: 2000;
     pointer-events: none;
-    background: #f0f1fa;
+    background: var(--brand-bg);
     opacity: 0;
     visibility: hidden;
 }

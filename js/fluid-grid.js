@@ -1,8 +1,8 @@
 /* ============================================================
    FluidGrid — fondo interactivo de la página Portfolio.
    Inspirado en la lógica visual de haoqi.design (sin copiar su
-   código): base marfil, microtrama fina, guías estructurales
-   con cruces técnicos y deformación local con estela.
+   código): fondo hielo, partículas separadas y deformación local
+   con estela. Portfolio y proyectos comparten la variante híbrida.
 
    Adaptado a la identidad del sitio: la trama fina son PUNTOS,
    los mismos puntos de la esfera y de la extrusión. Al acercar
@@ -19,24 +19,29 @@
 (function () {
     'use strict';
 
-    /* Valores recomendados de producción (ver README-instrucciones). */
+    var isPortfolioSurface = document.body &&
+        (document.body.classList.contains('portfolio-page') ||
+            document.body.classList.contains('project-page'));
+
+    /* Portfolio y proyecto usan el mismo fondo híbrido: partículas con
+       más aire, sin guías geométricas y con el mismo movimiento. */
     var SETTINGS = {
-        base: [0.941, 0.945, 0.980],     /* lavanda claro #F0F1FA */
+        base: [0.941, 0.945, 0.980],     /* blanco hielo de la marca */
         ink: [0.055, 0.043, 0.086],      /* tinta #0E0B16 */
-        finePeriod: 4,                   /* microtrama 4 x 4 px (CSS) */
-        dotRadius: 0.85,                 /* radio de cada punto (CSS px) */
-        dotAlpha: 0.12,                  /* opacidad base del punto */
-        sparseRatio: 0.02,               /* % de puntos con color de marca */
-        sparseAlpha: 0.30,
-        haloAlpha: 0.90,                 /* opacidad del punto deformado */
-        radius: 160,                     /* radio del área afectada (CSS px) */
-        strength: 16,                    /* desplazamiento máximo (CSS px) */
+        finePeriod: isPortfolioSurface ? 20 : 4,
+        dotRadius: isPortfolioSurface ? 1.15 : 0.85,
+        dotAlpha: isPortfolioSurface ? 0.14 : 0.12,
+        sparseRatio: isPortfolioSurface ? 0.045 : 0.02,
+        sparseAlpha: isPortfolioSurface ? 0.34 : 0.30,
+        haloAlpha: isPortfolioSurface ? 0.86 : 0.90,
+        radius: isPortfolioSurface ? 180 : 160,
+        strength: isPortfolioSurface ? 18 : 16,
         trail: 10,                       /* puntos de la estela */
         inertia: 0.16,                   /* velocidad de seguimiento (0-1) */
-        parallax: 22,                    /* recorrido total del fondo (CSS px) */
+        parallax: isPortfolioSurface ? 16 : 22,
         parallaxEase: 0.05,
-        guideLineAlpha: 0.10,            /* opacidad de la retícula grande */
-        guideCrossAlpha: 0.32,
+        guideLineAlpha: isPortfolioSurface ? 0 : 0.10,
+        guideCrossAlpha: isPortfolioSurface ? 0 : 0.32,
         guideCrossArm: 9,                /* brazo del cruce técnico (CSS px) */
         maxDpr: 1.5,
         idleMs: 1200                     /* pausa de dibujo sin actividad */
@@ -105,19 +110,23 @@
         '    if (dl > S) def *= S / dl;',
         '    float infl = clamp(dl / S, 0.0, 1.0);',
         '',
-        '    /* Microtrama fina de PUNTOS (coordenadas deformadas). */',
+        '    /* Partículas separadas, con una variación mínima de posición y',
+        '       tamaño para evitar el aspecto de una rejilla rígida. */',
         '    vec2 pf = pw + def;',
         '    float P = ' + SETTINGS.finePeriod.toFixed(1) + ' * uDpr;',
         '    vec2 cell = floor(pf / P);',
         '    vec2 center = (cell + 0.5) * P;',
+        '    float h = fract(sin(dot(cell, vec2(127.1, 311.7))) * 43758.5453);',
+        '    float hx = fract(sin(dot(cell, vec2(269.5, 183.3))) * 43758.5453);',
+        '    center += (vec2(h, hx) - 0.5) * P * 0.18;',
         '    float dd = length(pf - center);',
-        '    float dotR = ' + SETTINGS.dotRadius.toFixed(2) + ' * uDpr;',
+        '    float dotR = ' + SETTINGS.dotRadius.toFixed(2) +
+            ' * uDpr * mix(0.76, 1.24, fract(h * 17.0));',
         '    float aa = 0.65 * uDpr;',
         '    float dotA = 1.0 - smoothstep(dotR - aa, dotR + aa, dd);',
         '',
         '    float t = clamp(center.x / uRes.x, 0.0, 1.0);',
         '    vec3 bcol = brand(t);',
-        '    float h = fract(sin(dot(cell, vec2(127.1, 311.7))) * 43758.5453);',
         '    float sparse = step(' + (1 - SETTINGS.sparseRatio).toFixed(3) + ', h);',
         '',
         '    vec3 dotCol = mix(uInk, bcol, sparse);',

@@ -541,20 +541,7 @@
         };
         handlers.play = function () {
             if (!playerReadyForPlayback || !playerPlayRequested) return;
-            videoPlayConfirmed = true;
-            playerPlayRequested = false;
-            playerPauseRequested = false;
-            playerPaused = false;
-            showPlayerVideo(iframe);
-            updatePlayButton(false);
-            /* El vídeo debe empezar con un solo clic en la miniatura. La
-               barra queda fuera del camino mientras reproduce y reaparece
-               al mover el cursor o tocar el reproductor. */
-            hidePlayerControls();
-            startProgressSync();
-            if (videoAudioRequested) {
-                ensureVideoAudio(player).catch(function () {});
-            }
+            confirmPlayerPlayback(iframe, player);
         };
         handlers.pause = function () {
             if (!playerPauseRequested) return;
@@ -587,6 +574,23 @@
         });
     }
 
+    function confirmPlayerPlayback(iframe, player) {
+        videoPlayConfirmed = true;
+        playerPlayRequested = false;
+        playerPauseRequested = false;
+        playerPaused = false;
+        showPlayerVideo(iframe);
+        updatePlayButton(false);
+        /* El vídeo debe empezar con un solo clic en la miniatura. La
+           barra queda fuera del camino mientras reproduce y reaparece
+           al mover el cursor o tocar el reproductor. */
+        hidePlayerControls();
+        startProgressSync();
+        if (videoAudioRequested) {
+            ensureVideoAudio(player).catch(function () {});
+        }
+    }
+
     function ensureVideoAudio(player) {
         if (!player) return Promise.resolve();
         var unmute = typeof player.setMuted === 'function' ?
@@ -600,33 +604,6 @@
             }
             updateMuteButton(false);
         });
-    }
-
-    function pausePreparedVimeo(player) {
-        if (!player || typeof player.pause !== 'function') {
-            return Promise.resolve();
-        }
-
-        var attempts = 0;
-        function attempt() {
-            attempts += 1;
-            return withTimeout(player.pause(), 700)
-                .catch(function () {})
-                .then(function () {
-                    if (typeof player.getPaused !== 'function' ||
-                        attempts >= 3) return;
-                    return withTimeout(player.getPaused(), 700)
-                        .then(function (isPaused) {
-                            if (isPaused) return;
-                            return new Promise(function (resolve) {
-                                window.setTimeout(resolve, 100);
-                            }).then(attempt);
-                        })
-                        .catch(function () {});
-                });
-        }
-
-        return attempt();
     }
 
     function updatePlayerProgress(seconds, duration, percent) {
@@ -858,36 +835,30 @@
 
             var iframe = state.iframe;
             mount.appendChild(iframe);
+            /* La portada permanece visible hasta que Vimeo confirme el
+               primer evento real de reproducción. Así nunca se muestra un
+               fotograma congelado durante la preparación del iframe. */
             iframe.style.opacity = '0';
             vimeoPlayer = state.player;
             playerReadyForPlayback = false;
-            showPlayerVideo(iframe);
             playerPaused = true;
             updatePlayButton(true);
-            /* La precarga puede seguir reproduciéndose en silencio aunque
-               el iframe todavía no haya emitido su evento load. Se detiene
-               siempre antes de enlazar los eventos del panel visible. */
-            var pausePreparedPlayback = pausePreparedVimeo(vimeoPlayer);
             animatePlayerFromTrigger(trigger, false);
 
-            return pausePreparedPlayback
+            /* La precarga ya puede estar reproduciéndose en silencio. No la
+               detenemos: al conservar esa reproducción, el primer clic no
+               pierde el permiso de reproducción mientras termina la carga. */
+            return withTimeout(ensureVideoAudio(vimeoPlayer), 900)
+                .then(function () {
+                    videoAudioReady = true;
+                })
+                .catch(function () {
+                    overlay.dataset.volume = '1';
+                    overlay.dataset.muted = 'false';
+                    updateMuteButton(false);
+                })
                 .then(function () {
                     return withTimeout(vimeoPlayer.setCurrentTime(0), 700);
-                })
-                .catch(function () {})
-                .then(function () {
-                    /* La precarga necesita estar silenciada, pero el
-                       reproductor visible debe quedar listo para que el
-                       siguiente clic reproduzca con sonido. */
-                    return withTimeout(ensureVideoAudio(vimeoPlayer), 900)
-                        .then(function () {
-                            videoAudioReady = true;
-                        })
-                        .catch(function () {
-                            overlay.dataset.volume = '1';
-                            overlay.dataset.muted = 'false';
-                            updateMuteButton(false);
-                        });
                 })
                 .then(function () {
                     return Promise.all([
@@ -916,14 +887,28 @@
                 .then(function (duration) {
                     playerDuration = duration || 0;
                     updatePlayerProgress(0, playerDuration, 0);
-                    showPlayerVideo(iframe);
-                    /* Los eventos se enlazan después de detener la precarga.
-                       Así una pausa pendiente de Vimeo no puede cancelar el
-                       primer Play del usuario. */
+                    /* Los eventos se enlazan después de preparar el iframe.
+                       La portada sigue visible hasta confirmar el primer
+                       evento real de reproducción. */
                     bindVimeoEvents(vimeoPlayer, iframe);
                     playerReadyForPlayback = true;
                     setPlayerPlaybackReady(true);
-                    if (playerPlayRequested) requestPlayerPlay();
+                    if (!playerPlayRequested) return;
+
+                    /* La precarga puede haber empezado antes de enlazar los
+                       eventos. En ese caso no llamamos a play() por segunda
+                       vez: confirmamos la reproducción ya existente. */
+                    return withTimeout(vimeoPlayer.getPaused(), 700)
+                        .then(function (isPaused) {
+                            if (!isPaused) {
+                                confirmPlayerPlayback(iframe, vimeoPlayer);
+                                return;
+                            }
+                            requestPlayerPlay();
+                        })
+                        .catch(function () {
+                            requestPlayerPlay();
+                        });
                 });
         }).catch(function () {
             if (openToken !== playerOpenToken || overlay.hidden) return;

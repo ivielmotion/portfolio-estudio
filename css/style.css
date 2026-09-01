@@ -190,11 +190,10 @@ body.tint-ig #blob_container:before { opacity: 1; }
     contain: layout paint size;
 }
 
-/* Respaldo estático cuando WebGL2 no está disponible:
-   microtrama de puntos 4 x 4 px + guías estructurales. */
+/* Respaldo estático cuando WebGL2 no está disponible. */
 .fallback-grid {
     display: none;
-    background-color: #f0f1fa;
+    background-color: var(--brand-bg);
     background-image:
         radial-gradient(circle, rgba(14, 11, 22, 0.14) 0.8px,
             transparent 1px),
@@ -202,6 +201,22 @@ body.tint-ig #blob_container:before { opacity: 1; }
         linear-gradient(90deg, rgba(14, 11, 22, 0.10) 1px,
             transparent 1px);
     background-size: 4px 4px, 20vw 25vh, 20vw 25vh;
+}
+
+/* El Portfolio conserva solo la textura de partículas: sin líneas,
+   cuadrados ni cruces técnicas. */
+.portfolio-page .fallback-grid {
+    background-color: var(--brand-bg);
+    background-image: radial-gradient(circle,
+        rgba(14, 11, 22, 0.16) 1.05px, transparent 1.65px);
+    background-size: 20px 20px;
+}
+
+.project-page .fallback-grid {
+    background-color: var(--brand-bg);
+    background-image: radial-gradient(circle,
+        rgba(14, 11, 22, 0.16) 1.05px, transparent 1.65px);
+    background-size: 20px 20px;
 }
 
 body.no-fluid-grid #fluid-grid { display: none; }

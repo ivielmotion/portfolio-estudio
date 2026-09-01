@@ -47,6 +47,10 @@
         contactClose: 'close'
     }, window.SITE_SOUND_MAP || {});
 
+    const AUDIO_STATE_KEY = 'siteAudioContinuity';
+    const AMBIENT_FADE_MS = 220;
+    const AMBIENT_DUCK_FACTOR = 0.025;
+
     const sounds = {};
     const eventIndexes = {};
     let initialized = false;
@@ -56,6 +60,145 @@
     let activeBlob = null;
     let lastSound = '';
     let lastEvent = '';
+    let ambientDucked = false;
+    let ambientFadeToken = 0;
+    let interactionFadeToken = 0;
+    let navigationPrepared = false;
+    let pageAmbientEnabled = true;
+
+    function ambientName() {
+        return EVENT_SOUNDS.ambient;
+    }
+
+    function ambientConfig() {
+        return SOUND_CONFIG[ambientName()] || SOUND_CONFIG.ambient;
+    }
+
+    function ambientTargetVolume() {
+        const config = ambientConfig();
+        return config.volume * (ambientDucked ? AMBIENT_DUCK_FACTOR : 1);
+    }
+
+    function readAudioState() {
+        try {
+            const raw = sessionStorage.getItem(AUDIO_STATE_KEY);
+            if (!raw) return null;
+            const state = JSON.parse(raw);
+            if (!state || typeof state !== 'object') return null;
+            return state;
+        } catch (error) {
+            return null;
+        }
+    }
+
+    function persistAudioState() {
+        const ambient = sounds[ambientName()];
+        try {
+            sessionStorage.setItem(AUDIO_STATE_KEY, JSON.stringify({
+                enabled: enabled,
+                ambientRequested: ambientRequested,
+                currentTime: ambient && Number.isFinite(ambient.currentTime) ?
+                    ambient.currentTime : 0,
+                timestamp: Date.now()
+            }));
+        } catch (error) {
+            /* La navegación sigue funcionando aunque el almacenamiento falle. */
+        }
+    }
+
+    function fadeAmbientTo(target, duration, onComplete) {
+        const ambient = sounds[ambientName()];
+        if (!ambient) return;
+
+        const token = ++ambientFadeToken;
+        const from = ambient.volume;
+        const start = performance.now();
+        const ms = Math.max(0, Number(duration) || 0);
+
+        function step(now) {
+            if (token !== ambientFadeToken) return;
+            const progress = ms === 0 ? 1 :
+                Math.min(1, Math.max(0, (now - start) / ms));
+            ambient.volume = from + ((target - from) * progress);
+            if (progress < 1) {
+                window.requestAnimationFrame(step);
+                return;
+            }
+            if (typeof onComplete === 'function') onComplete();
+        }
+
+        window.requestAnimationFrame(step);
+    }
+
+    function fadeInteractionSounds() {
+        const active = Object.keys(sounds).filter(function (name) {
+            const audio = sounds[name];
+            const config = SOUND_CONFIG[name];
+            return audio && config && !config.loop && !audio.paused;
+        }).map(function (name) {
+            return {
+                name: name,
+                audio: sounds[name],
+                from: sounds[name].volume
+            };
+        });
+        if (!active.length) return;
+
+        const token = ++interactionFadeToken;
+        const start = performance.now();
+
+        function step(now) {
+            if (token !== interactionFadeToken) return;
+            const progress = Math.min(1, Math.max(0,
+                (now - start) / AMBIENT_FADE_MS));
+            active.forEach(function (item) {
+                item.audio.volume = item.from * (1 - progress);
+            });
+            if (progress < 1) {
+                window.requestAnimationFrame(step);
+                return;
+            }
+            active.forEach(function (item) {
+                item.audio.pause();
+                item.audio.currentTime = 0;
+                item.audio.volume = SOUND_CONFIG[item.name].volume;
+            });
+        }
+
+        window.requestAnimationFrame(step);
+    }
+
+    function prepareForNavigation() {
+        if (navigationPrepared) return;
+        navigationPrepared = true;
+        ambientDucked = false;
+        persistAudioState();
+
+        const ambient = sounds[ambientName()];
+        if (ambient && !ambient.paused) {
+            fadeAmbientTo(0, AMBIENT_FADE_MS, function () {
+                ambient.pause();
+                ambient.volume = ambientConfig().volume;
+                persistAudioState();
+            });
+        }
+        fadeInteractionSounds();
+    }
+
+    function isInternalNavigation(target) {
+        const link = target && target.closest('a[href]');
+        if (!link || link.hasAttribute('download') || link.target === '_blank') {
+            return false;
+        }
+        try {
+            const url = new URL(link.href, window.location.href);
+            return url.origin === window.location.origin &&
+                url.protocol === window.location.protocol &&
+                url.pathname !== window.location.pathname;
+        } catch (error) {
+            return false;
+        }
+    }
 
     function createSound(name) {
         if (sounds[name] || !SOUND_CONFIG[name]) return sounds[name] || null;
@@ -64,7 +207,8 @@
         const audio = new Audio(cfg.src);
         audio.volume = cfg.volume;
         audio.loop = Boolean(cfg.loop);
-        audio.preload = cfg.loop ? 'auto' : 'none';
+        audio.preload = cfg.loop || cfg.src.indexOf('./sounds/') === 0 ?
+            'auto' : 'none';
         audio.addEventListener('error', function () {
             if (document.documentElement.dataset.lastSound === name) {
                 document.documentElement.dataset.lastSoundStatus = 'error';
@@ -76,7 +220,19 @@
 
     function init() {
         if (initialized) return true;
-        createSound(EVENT_SOUNDS.ambient);
+        const savedState = readAudioState();
+        if (savedState) {
+            enabled = savedState.enabled !== false;
+            ambientRequested = savedState.ambientRequested === true;
+        }
+        const ambient = createSound(ambientName());
+        if (ambient && savedState && Number.isFinite(savedState.currentTime)) {
+            try {
+                ambient.currentTime = Math.max(0, savedState.currentTime);
+            } catch (error) {
+                /* El navegador puede esperar a tener metadatos para ajustar el tiempo. */
+            }
+        }
         initialized = true;
         return true;
     }
@@ -153,28 +309,60 @@
     }
 
     function startAmbient() {
+        if (!pageAmbientEnabled) return false;
         ambientRequested = true;
-        if (!enabled) return false;
-        return playEvent('ambient');
+        if (!enabled) {
+            persistAudioState();
+            return false;
+        }
+        if (!initialized) init();
+
+        const ambient = createSound(ambientName());
+        if (!ambient) return false;
+        if (ambient.paused) ambient.volume = 0;
+        const result = play(ambientName(), 'ambient');
+        if (result) fadeAmbientTo(ambientTargetVolume(), 360);
+        persistAudioState();
+        return result;
     }
 
     function stopAmbient() {
         ambientRequested = false;
-        const ambientName = EVENT_SOUNDS.ambient;
-        const audio = sounds[ambientName];
+        ambientDucked = false;
+        const audio = sounds[ambientName()];
         if (audio) {
             audio.pause();
             audio.currentTime = 0;
+            audio.volume = ambientConfig().volume;
         }
+        persistAudioState();
+    }
+
+    function setAmbientDucked(nextDucked) {
+        ambientDucked = Boolean(nextDucked);
+        if (!pageAmbientEnabled || !enabled || !ambientRequested) {
+            return ambientDucked;
+        }
+        const ambient = sounds[ambientName()];
+        if (ambient && !ambient.paused) {
+            fadeAmbientTo(ambientTargetVolume(), AMBIENT_FADE_MS);
+        }
+        return ambientDucked;
     }
 
     function setEnabled(nextEnabled) {
         enabled = Boolean(nextEnabled);
         Object.values(sounds).forEach(function (audio) {
             audio.muted = !enabled;
-            if (!enabled && audio.loop) audio.pause();
+            if (!enabled && audio.loop) {
+                fadeAmbientTo(0, AMBIENT_FADE_MS, function () {
+                    audio.pause();
+                    audio.volume = ambientConfig().volume;
+                });
+            }
         });
         if (enabled && ambientRequested) startAmbient();
+        persistAudioState();
         return enabled;
     }
 
@@ -197,10 +385,24 @@
 
     function bindPage(options) {
         activeBlob = options && options.blob ? options.blob : activeBlob;
+        pageAmbientEnabled = !(options && options.ambient === false);
         if (pageBindingsInstalled) return;
         pageBindingsInstalled = true;
         init();
+        Object.keys(SOUND_CONFIG).forEach(function (name) {
+            if (name !== ambientName() &&
+                SOUND_CONFIG[name].src.indexOf('./sounds/') === 0) {
+                createSound(name);
+            }
+        });
         bindHoverElements(document);
+
+        window.addEventListener('pagehide', persistAudioState);
+        window.addEventListener('beforeunload', persistAudioState);
+
+        if (pageAmbientEnabled && ambientRequested && enabled) {
+            window.setTimeout(startAmbient, 0);
+        }
 
         function unlockAudio() {
             startAmbient();
@@ -230,6 +432,7 @@
 
             if (target.closest('#logo a, .pf-topnav a, .about-topnav a')) {
                 playEvent('logoClick');
+                if (isInternalNavigation(target)) prepareForNavigation();
                 return;
             }
             if (target.closest('#close_form')) {
@@ -238,10 +441,12 @@
             }
             if (target.closest('.pf-play, .pf-project-link')) {
                 playEvent('projectOpen');
+                if (isInternalNavigation(target)) prepareForNavigation();
                 return;
             }
             if (isInteractiveTarget(target)) {
                 playEvent('genericClick');
+                if (isInternalNavigation(target)) prepareForNavigation();
             }
         });
 
@@ -266,9 +471,17 @@
         document.addEventListener('visibilitychange', function () {
             const ambientName = EVENT_SOUNDS.ambient;
             const ambient = sounds[ambientName];
-            if (!ambientRequested || !ambient) return;
-            if (document.hidden) ambient.pause();
-            else if (enabled) play(ambientName, 'ambient');
+            if (!pageAmbientEnabled || !ambientRequested || !ambient) return;
+            if (document.hidden) {
+                persistAudioState();
+                fadeAmbientTo(0, AMBIENT_FADE_MS, function () {
+                    ambient.pause();
+                    ambient.volume = ambientConfig().volume;
+                    persistAudioState();
+                });
+            } else if (enabled) {
+                startAmbient();
+            }
         });
     }
 
@@ -281,6 +494,8 @@
         startAmbient: startAmbient,
         stopAmbient: stopAmbient,
         setEnabled: setEnabled,
+        setAmbientDucked: setAmbientDucked,
+        prepareForNavigation: prepareForNavigation,
         toggle: function () { return setEnabled(!enabled); },
         setEventSound: function (eventName, soundName) {
             EVENT_SOUNDS[eventName] = soundName;
@@ -293,6 +508,13 @@
             return {
                 initialized: initialized,
                 ambientRequested: ambientRequested,
+                pageAmbientEnabled: pageAmbientEnabled,
+                ambientDucked: ambientDucked,
+                ambientPlaying: Boolean(
+                    sounds[ambientName()] && !sounds[ambientName()].paused
+                ),
+                ambientVolume: sounds[ambientName()] ?
+                    sounds[ambientName()].volume : null,
                 lastSound: lastSound,
                 lastEvent: lastEvent
             };

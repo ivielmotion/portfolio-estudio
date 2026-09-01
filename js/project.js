@@ -21,6 +21,7 @@
             document.body.classList.add('no-fluid-grid');
         }
     }
+    if (window.AudioEngine) AudioEngine.bindPage({ ambient: false });
 
     function esc(value) {
         return String(value || '')
@@ -304,6 +305,13 @@
     var playerCloseTimer = null;
     var playerOpenToken = 0;
     var playerPaused = true;
+    var videoAudioRequested = false;
+    var videoAudioReady = false;
+    var videoPlayConfirmed = false;
+    var controlsHideTimer = null;
+    var controlsHideDelay = 3000;
+    var progressSyncTimer = null;
+    var progressSyncToken = 0;
     var playerVideoWidth = 16;
     var playerVideoHeight = 9;
 
@@ -448,6 +456,7 @@
             player: null,
             ready: false,
             iframeLoaded: false,
+            exposed: false,
             promise: null
         };
         var iframeLoadResolve;
@@ -468,9 +477,11 @@
                 return withTimeout(state.player.ready(), 1800, 'Vimeo no respondió.')
                     .then(function () {
                     state.ready = true;
+                    if (state.exposed) return state;
                     return withTimeout(state.player.setVolume(0), 700)
                         .catch(function () {})
                         .then(function () {
+                            if (state.exposed) return state;
                             return withTimeout(state.player.play(), 900)
                                 .catch(function () {});
                         })
@@ -509,36 +520,155 @@
 
         player.on('timeupdate', function (data) {
             showPlayerVideo(iframe);
-            var range = document.getElementById('pjPlayerRange');
-            var time = document.getElementById('pjPlayerTime');
-            if (range && !range.matches(':active')) {
-                range.value = String(Math.round((data.percent || 0) * 1000));
-                range.style.setProperty('--pj-progress',
-                    ((data.percent || 0) * 100) + '%');
-            }
-            if (time) {
-                time.textContent = formatTime(data.seconds) + ' / ' +
-                    formatTime(data.duration || playerDuration);
-            }
+            updatePlayerProgress(data.seconds, data.duration, data.percent);
         });
         player.on('play', function () {
+            videoPlayConfirmed = true;
             playerPaused = false;
             showPlayerVideo(iframe);
             updatePlayButton(false);
+            showPlayerControls();
+            startProgressSync();
+            if (videoAudioRequested) {
+                ensureVideoAudio(player).catch(function () {});
+            }
         });
         player.on('pause', function () {
+            videoPlayConfirmed = false;
             playerPaused = true;
             updatePlayButton(true);
+            stopProgressSync();
+            showPlayerControls();
+            if (window.AudioEngine) AudioEngine.setAmbientDucked(false);
+        });
+        player.on('ended', function () {
+            finishPlayerPlayback();
         });
         player.on('volumechange', function (data) {
             var overlay = document.getElementById('pjPlayer');
             var isMuted = Boolean(data.muted) || data.volume === 0;
+            if (!videoAudioReady && !videoAudioRequested) return;
             if (overlay) {
                 overlay.dataset.volume = String(data.volume || 0);
                 overlay.dataset.muted = String(isMuted);
             }
             updateMuteButton(isMuted);
         });
+    }
+
+    function ensureVideoAudio(player) {
+        if (!player) return Promise.resolve();
+        var unmute = typeof player.setMuted === 'function' ?
+            player.setMuted(false) : Promise.resolve();
+        var volume = player.setVolume(1);
+        return Promise.all([unmute, volume]).then(function () {
+            var overlay = document.getElementById('pjPlayer');
+            if (overlay) {
+                overlay.dataset.volume = '1';
+                overlay.dataset.muted = 'false';
+            }
+            updateMuteButton(false);
+        });
+    }
+
+    function updatePlayerProgress(seconds, duration, percent) {
+        var range = document.getElementById('pjPlayerRange');
+        var time = document.getElementById('pjPlayerTime');
+        var total = Number(duration) || playerDuration || 0;
+        var current = Number(seconds);
+        var ratio = Number(percent);
+
+        if (total > 0 && Number.isFinite(current)) {
+            ratio = current / total;
+        }
+        if (!Number.isFinite(ratio)) ratio = 0;
+        ratio = Math.min(1, Math.max(0, ratio));
+
+        if (range && !range.matches(':active')) {
+            range.value = String(Math.round(ratio * 1000));
+            range.style.setProperty('--pj-progress', (ratio * 100) + '%');
+        }
+        if (time) {
+            time.textContent = formatTime(Number.isFinite(current) ? current : 0) +
+                ' / ' + formatTime(total);
+        }
+    }
+
+    function stopProgressSync() {
+        ++progressSyncToken;
+        if (progressSyncTimer) {
+            window.clearTimeout(progressSyncTimer);
+            progressSyncTimer = null;
+        }
+    }
+
+    function startProgressSync() {
+        stopProgressSync();
+        var token = progressSyncToken;
+
+        function poll() {
+            if (token !== progressSyncToken || playerPaused || !vimeoPlayer ||
+                typeof vimeoPlayer.getCurrentTime !== 'function') {
+                return;
+            }
+
+            var activePlayer = vimeoPlayer;
+            var durationPromise = playerDuration > 0 ?
+                Promise.resolve(playerDuration) : activePlayer.getDuration();
+            Promise.all([
+                activePlayer.getCurrentTime(),
+                durationPromise
+            ]).then(function (values) {
+                if (token !== progressSyncToken || playerPaused ||
+                    activePlayer !== vimeoPlayer) return;
+                playerDuration = Number(values[1]) || playerDuration;
+                var currentTime = Number(values[0]) || 0;
+                updatePlayerProgress(currentTime, playerDuration);
+                if (playerDuration > 0 &&
+                    currentTime >= playerDuration - 0.25) {
+                    finishPlayerPlayback();
+                    return;
+                }
+                progressSyncTimer = window.setTimeout(poll, 250);
+            }).catch(function () {
+                if (token === progressSyncToken && !playerPaused) {
+                    progressSyncTimer = window.setTimeout(poll, 400);
+                }
+            });
+        }
+
+        poll();
+    }
+
+    function clearControlsHideTimer() {
+        if (controlsHideTimer) {
+            window.clearTimeout(controlsHideTimer);
+            controlsHideTimer = null;
+        }
+    }
+
+    function showPlayerControls() {
+        var overlay = document.getElementById('pjPlayer');
+        if (!overlay) return;
+        clearControlsHideTimer();
+        overlay.classList.remove('pj-player--controls-hidden');
+        if (!playerPaused && !overlay.hidden) {
+            controlsHideTimer = window.setTimeout(function () {
+                if (!playerPaused && !overlay.hidden) {
+                    overlay.classList.add('pj-player--controls-hidden');
+                }
+            }, controlsHideDelay);
+        }
+    }
+
+    function finishPlayerPlayback() {
+        videoPlayConfirmed = false;
+        playerPaused = true;
+        updatePlayButton(true);
+        stopProgressSync();
+        updatePlayerProgress(playerDuration, playerDuration, 1);
+        showPlayerControls();
+        if (window.AudioEngine) AudioEngine.setAmbientDucked(false);
     }
 
     function updatePlayButton(isPaused) {
@@ -565,11 +695,14 @@
         if (!overlay || !mount) return;
 
         window.clearTimeout(playerCloseTimer);
+        clearControlsHideTimer();
+        stopProgressSync();
         var openToken = ++playerOpenToken;
         playerTrigger = trigger;
         var actionCursor = document.getElementById('pjActionCursor');
         if (actionCursor) actionCursor.classList.remove('is-visible');
         overlay.classList.remove('is-closing');
+        overlay.classList.remove('pj-player--controls-hidden');
         overlay.hidden = false;
         overlay.dataset.videoReady = 'false';
         document.body.classList.add('pj-player-open');
@@ -581,6 +714,9 @@
         }
         updateMuteButton(false);
         playerPaused = true;
+        videoAudioRequested = false;
+        videoAudioReady = false;
+        videoPlayConfirmed = false;
         updatePlayButton(true);
         sizePlayerVideo(16, 9);
         mount.innerHTML = '';
@@ -595,6 +731,7 @@
             }
 
             var iframe = state.iframe;
+            state.exposed = true;
             if (!state.player || !state.ready) {
                 if (!state.iframeLoaded) {
                     throw new Error('El vídeo no terminó de cargar.');
@@ -627,6 +764,20 @@
                 })
                 .catch(function () {})
                 .then(function () {
+                    /* La precarga necesita estar silenciada, pero el
+                       reproductor visible debe quedar listo para que el
+                       siguiente clic reproduzca con sonido. */
+                    return withTimeout(ensureVideoAudio(vimeoPlayer), 900)
+                        .then(function () {
+                            videoAudioReady = true;
+                        })
+                        .catch(function () {
+                            overlay.dataset.volume = '1';
+                            overlay.dataset.muted = 'false';
+                            updateMuteButton(false);
+                        });
+                })
+                .then(function () {
                     return Promise.all([
                         withTimeout(vimeoPlayer.getVideoWidth(), 700),
                         withTimeout(vimeoPlayer.getVideoHeight(), 700)
@@ -634,19 +785,6 @@
                 })
                 .then(function (dimensions) {
                     sizePlayerVideo(dimensions[0], dimensions[1]);
-                    return Promise.all([
-                        withTimeout(vimeoPlayer.getVolume(), 700),
-                        typeof vimeoPlayer.getMuted === 'function' ?
-                            withTimeout(vimeoPlayer.getMuted(), 700) :
-                            Promise.resolve(true)
-                    ]);
-                })
-                .then(function (audioState) {
-                    var isMuted = Boolean(audioState[1]) ||
-                        Number(audioState[0]) === 0;
-                    overlay.dataset.volume = String(audioState[0]);
-                    overlay.dataset.muted = String(isMuted);
-                    updateMuteButton(isMuted);
                 })
                 .catch(function () {
                     return withTimeout(vimeoPlayer.pause(), 700)
@@ -654,7 +792,9 @@
                         .then(function () {
                             playerPaused = true;
                             updatePlayButton(true);
-                            updateMuteButton(true);
+                            overlay.dataset.volume = '1';
+                            overlay.dataset.muted = 'false';
+                            updateMuteButton(false);
                         });
                 })
                 .then(function () {
@@ -663,8 +803,7 @@
                 })
                 .then(function (duration) {
                     playerDuration = duration || 0;
-                    document.getElementById('pjPlayerTime').textContent =
-                        '0:00 / ' + formatTime(playerDuration);
+                    updatePlayerProgress(0, playerDuration, 0);
                     showPlayerVideo(iframe);
                 });
         }).catch(function () {
@@ -687,8 +826,14 @@
 
         if (overlay.classList.contains('is-closing')) return;
         ++playerOpenToken;
+        clearControlsHideTimer();
+        stopProgressSync();
+        videoAudioRequested = false;
+        videoAudioReady = false;
+        videoPlayConfirmed = false;
         overlay.classList.add('is-closing');
         animatePlayerFromTrigger(playerTrigger, true);
+        if (window.AudioEngine) AudioEngine.setAmbientDucked(false);
         if (vimeoPlayer) vimeoPlayer.pause().catch(function () {});
 
         playerCloseTimer = window.setTimeout(function () {
@@ -719,6 +864,9 @@
         if (!playerPaused) {
             playerPaused = true;
             updatePlayButton(true);
+            stopProgressSync();
+            showPlayerControls();
+            if (window.AudioEngine) AudioEngine.setAmbientDucked(false);
             vimeoPlayer.pause().catch(function () {});
             return;
         }
@@ -726,23 +874,36 @@
         /* Estas tres peticiones salen directamente desde el clic del
            usuario. Así el navegador puede autorizar sonido y reproducción
            sin que una espera intermedia consuma ese gesto. */
-        var unmute = typeof vimeoPlayer.setMuted === 'function' ?
-            vimeoPlayer.setMuted(false) : Promise.resolve();
-        var volume = vimeoPlayer.setVolume(1);
+        videoAudioRequested = true;
+        videoAudioReady = true;
+        videoPlayConfirmed = false;
+        if (window.AudioEngine) AudioEngine.setAmbientDucked(true);
+        ensureVideoAudio(vimeoPlayer).catch(function () {
+            updateMuteButton(true);
+        });
         var play = vimeoPlayer.play();
         playerPaused = false;
         updatePlayButton(false);
-        Promise.all([unmute, volume]).catch(function () {
-            updateMuteButton(true);
-        });
-        withTimeout(play, 1200).catch(function () {
+        updateMuteButton(false);
+        showPlayerControls();
+        startProgressSync();
+        Promise.resolve(play).then(function () {
+            if (videoAudioRequested && vimeoPlayer) {
+                return ensureVideoAudio(vimeoPlayer);
+            }
+        }).catch(function () {
+            if (videoPlayConfirmed) return;
             playerPaused = true;
             updatePlayButton(true);
+            videoAudioRequested = false;
+            if (window.AudioEngine) AudioEngine.setAmbientDucked(false);
         });
     }
 
     function toggleMute() {
         if (!vimeoPlayer) return;
+        videoAudioReady = true;
+        showPlayerControls();
         Promise.all([
             vimeoPlayer.getVolume(),
             typeof vimeoPlayer.getMuted === 'function' ?
@@ -750,6 +911,7 @@
         ]).then(function (audioState) {
             var shouldEnable = Boolean(audioState[1]) ||
                 Number(audioState[0]) === 0;
+            videoAudioRequested = shouldEnable;
             var unmute = typeof vimeoPlayer.setMuted === 'function' ?
                 vimeoPlayer.setMuted(!shouldEnable) : Promise.resolve();
             return unmute.then(function () {
@@ -761,6 +923,15 @@
     }
 
     function bindPlayerControls() {
+        var overlay = document.getElementById('pjPlayer');
+        if (overlay) {
+            ['pointermove', 'pointerdown', 'touchstart', 'keydown']
+                .forEach(function (eventName) {
+                    overlay.addEventListener(eventName, showPlayerControls, {
+                        passive: eventName === 'touchstart'
+                    });
+                });
+        }
         document.getElementById('pjPlayerClose')
             .addEventListener('click', closePlayer);
         document.getElementById('pjPlayerSurface')
@@ -772,6 +943,7 @@
         document.getElementById('pjPlayerRange')
             .addEventListener('input', function (event) {
                 if (!vimeoPlayer || !playerDuration) return;
+                showPlayerControls();
                 vimeoPlayer.setCurrentTime(
                     playerDuration * (Number(event.target.value) / 1000)
                 ).catch(function () {});

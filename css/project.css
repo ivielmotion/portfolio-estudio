@@ -809,6 +809,11 @@ body.pj-player-open .pj-action-cursor {
     transform: scale(1.04);
 }
 
+.pj-player__button:disabled {
+    cursor: wait;
+    opacity: 0.62;
+}
+
 .pj-player__timeline {
     display: flex;
     align-items: center;

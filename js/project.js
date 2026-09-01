@@ -312,6 +312,9 @@
     var controlsHideDelay = 3000;
     var progressSyncTimer = null;
     var progressSyncToken = 0;
+    var playerReadyForPlayback = false;
+    var playerPlayRequested = false;
+    var playerPauseRequested = false;
     var playerVideoWidth = 16;
     var playerVideoHeight = 9;
 
@@ -492,6 +495,12 @@
                 state.error = true;
                 return state;
             });
+        state.readyPromise = apiPreparation.then(function (prepared) {
+            if (!prepared || !prepared.player || !prepared.ready) {
+                throw new Error('Vimeo no está disponible.');
+            }
+            return prepared;
+        });
         state.promise = Promise.race([
             apiPreparation,
             new Promise(function (resolve) {
@@ -515,36 +524,53 @@
     }
 
     function bindVimeoEvents(player, iframe) {
-        if (!player || player.__estudioEventsBound) return;
-        player.__estudioEventsBound = true;
+        if (!player) return;
 
-        player.on('timeupdate', function (data) {
+        var previousHandlers = player.__estudioHandlers || {};
+        Object.keys(previousHandlers).forEach(function (eventName) {
+            try {
+                player.off(eventName, previousHandlers[eventName]);
+            } catch (error) {}
+        });
+
+        var handlers = {};
+        handlers.timeupdate = function (data) {
+            if (!playerReadyForPlayback || !videoPlayConfirmed) return;
             showPlayerVideo(iframe);
             updatePlayerProgress(data.seconds, data.duration, data.percent);
-        });
-        player.on('play', function () {
+        };
+        handlers.play = function () {
+            if (!playerReadyForPlayback || !playerPlayRequested) return;
             videoPlayConfirmed = true;
+            playerPlayRequested = false;
+            playerPauseRequested = false;
             playerPaused = false;
             showPlayerVideo(iframe);
             updatePlayButton(false);
-            showPlayerControls();
+            /* El vídeo debe empezar con un solo clic en la miniatura. La
+               barra queda fuera del camino mientras reproduce y reaparece
+               al mover el cursor o tocar el reproductor. */
+            hidePlayerControls();
             startProgressSync();
             if (videoAudioRequested) {
                 ensureVideoAudio(player).catch(function () {});
             }
-        });
-        player.on('pause', function () {
+        };
+        handlers.pause = function () {
+            if (!playerPauseRequested) return;
+            playerPauseRequested = false;
+            playerPlayRequested = false;
             videoPlayConfirmed = false;
             playerPaused = true;
             updatePlayButton(true);
             stopProgressSync();
             showPlayerControls();
             if (window.AudioEngine) AudioEngine.setAmbientDucked(false);
-        });
-        player.on('ended', function () {
+        };
+        handlers.ended = function () {
             finishPlayerPlayback();
-        });
-        player.on('volumechange', function (data) {
+        };
+        handlers.volumechange = function (data) {
             var overlay = document.getElementById('pjPlayer');
             var isMuted = Boolean(data.muted) || data.volume === 0;
             if (!videoAudioReady && !videoAudioRequested) return;
@@ -553,6 +579,11 @@
                 overlay.dataset.muted = String(isMuted);
             }
             updateMuteButton(isMuted);
+        };
+
+        player.__estudioHandlers = handlers;
+        Object.keys(handlers).forEach(function (eventName) {
+            player.on(eventName, handlers[eventName]);
         });
     }
 
@@ -569,6 +600,33 @@
             }
             updateMuteButton(false);
         });
+    }
+
+    function pausePreparedVimeo(player) {
+        if (!player || typeof player.pause !== 'function') {
+            return Promise.resolve();
+        }
+
+        var attempts = 0;
+        function attempt() {
+            attempts += 1;
+            return withTimeout(player.pause(), 700)
+                .catch(function () {})
+                .then(function () {
+                    if (typeof player.getPaused !== 'function' ||
+                        attempts >= 3) return;
+                    return withTimeout(player.getPaused(), 700)
+                        .then(function (isPaused) {
+                            if (isPaused) return;
+                            return new Promise(function (resolve) {
+                                window.setTimeout(resolve, 100);
+                            }).then(attempt);
+                        })
+                        .catch(function () {});
+                });
+        }
+
+        return attempt();
     }
 
     function updatePlayerProgress(seconds, duration, percent) {
@@ -661,8 +719,17 @@
         }
     }
 
+    function hidePlayerControls() {
+        var overlay = document.getElementById('pjPlayer');
+        if (!overlay) return;
+        clearControlsHideTimer();
+        overlay.classList.add('pj-player--controls-hidden');
+    }
+
     function finishPlayerPlayback() {
         videoPlayConfirmed = false;
+        playerPlayRequested = false;
+        playerPauseRequested = false;
         playerPaused = true;
         updatePlayButton(true);
         stopProgressSync();
@@ -678,12 +745,53 @@
         button.setAttribute('aria-label', isPaused ? 'Reproducir' : 'Pausar');
     }
 
+    function setPlayerPlaybackReady(isReady) {
+        var button = document.getElementById('pjPlayerToggle');
+        if (!button) return;
+        button.disabled = !isReady;
+        button.setAttribute('aria-disabled', String(!isReady));
+    }
+
     function updateMuteButton(isMuted) {
         var button = document.getElementById('pjPlayerMute');
         if (!button) return;
         button.innerHTML = playerIcon(isMuted ? 'muted' : 'volume');
         button.setAttribute('aria-label', isMuted ?
             'Activar sonido' : 'Silenciar');
+    }
+
+    function requestPlayerPlay() {
+        if (!vimeoPlayer || !playerReadyForPlayback) {
+            playerPlayRequested = true;
+            return;
+        }
+
+        videoAudioRequested = true;
+        videoAudioReady = true;
+        videoPlayConfirmed = false;
+        playerPlayRequested = true;
+        playerPauseRequested = false;
+        if (window.AudioEngine) AudioEngine.setAmbientDucked(true);
+
+        ensureVideoAudio(vimeoPlayer).catch(function () {
+            updateMuteButton(true);
+        });
+        var play = vimeoPlayer.play();
+        updateMuteButton(false);
+        hidePlayerControls();
+        Promise.resolve(play).then(function () {
+            if (videoAudioRequested && vimeoPlayer) {
+                return ensureVideoAudio(vimeoPlayer);
+            }
+        }).catch(function () {
+            if (videoPlayConfirmed) return;
+            playerPlayRequested = false;
+            playerPaused = true;
+            updatePlayButton(true);
+            videoAudioRequested = false;
+            showPlayerControls();
+            if (window.AudioEngine) AudioEngine.setAmbientDucked(false);
+        });
     }
 
     function openPlayer(url, trigger) {
@@ -702,7 +810,7 @@
         var actionCursor = document.getElementById('pjActionCursor');
         if (actionCursor) actionCursor.classList.remove('is-visible');
         overlay.classList.remove('is-closing');
-        overlay.classList.remove('pj-player--controls-hidden');
+        overlay.classList.add('pj-player--controls-hidden');
         overlay.hidden = false;
         overlay.dataset.videoReady = 'false';
         document.body.classList.add('pj-player-open');
@@ -714,10 +822,16 @@
         }
         updateMuteButton(false);
         playerPaused = true;
-        videoAudioRequested = false;
-        videoAudioReady = false;
+        playerReadyForPlayback = false;
+        /* El clic de la miniatura es también la orden de reproducción. */
+        playerPlayRequested = true;
+        playerPauseRequested = false;
+        vimeoPlayer = null;
+        videoAudioRequested = true;
+        videoAudioReady = true;
         videoPlayConfirmed = false;
-        updatePlayButton(true);
+        updatePlayButton(false);
+        setPlayerPlaybackReady(false);
         sizePlayerVideo(16, 9);
         mount.innerHTML = '';
         document.getElementById('pjPlayerClose').focus();
@@ -733,29 +847,27 @@
             var iframe = state.iframe;
             state.exposed = true;
             if (!state.player || !state.ready) {
-                if (!state.iframeLoaded) {
-                    throw new Error('El vídeo no terminó de cargar.');
-                }
-                mount.appendChild(iframe);
-                iframe.style.opacity = '1';
-                showPlayerVideo(iframe);
-                return;
+                return state.readyPromise;
             }
+            return state;
+        }).then(function (state) {
+            if (openToken !== playerOpenToken || overlay.hidden) return;
+            if (!state || !state.iframe || !state.player || !state.ready) {
+                throw new Error('El vídeo no terminó de cargar.');
+            }
+
+            var iframe = state.iframe;
             mount.appendChild(iframe);
             iframe.style.opacity = '0';
             vimeoPlayer = state.player;
-            bindVimeoEvents(vimeoPlayer, iframe);
-            var pausePreparedPlayback = Promise.resolve();
-            if (state.iframeLoaded) {
-                showPlayerVideo(iframe);
-                playerPaused = true;
-                updatePlayButton(true);
-                /* Se congela en el primer fotograma visible. El vídeo ya
-                   estaba preparado en segundo plano, así que el botón de
-                   reproducir no tiene que esperar otra carga. */
-                pausePreparedPlayback = withTimeout(vimeoPlayer.pause(), 700)
-                    .catch(function () {});
-            }
+            playerReadyForPlayback = false;
+            showPlayerVideo(iframe);
+            playerPaused = true;
+            updatePlayButton(true);
+            /* La precarga puede seguir reproduciéndose en silencio aunque
+               el iframe todavía no haya emitido su evento load. Se detiene
+               siempre antes de enlazar los eventos del panel visible. */
+            var pausePreparedPlayback = pausePreparedVimeo(vimeoPlayer);
             animatePlayerFromTrigger(trigger, false);
 
             return pausePreparedPlayback
@@ -805,6 +917,13 @@
                     playerDuration = duration || 0;
                     updatePlayerProgress(0, playerDuration, 0);
                     showPlayerVideo(iframe);
+                    /* Los eventos se enlazan después de detener la precarga.
+                       Así una pausa pendiente de Vimeo no puede cancelar el
+                       primer Play del usuario. */
+                    bindVimeoEvents(vimeoPlayer, iframe);
+                    playerReadyForPlayback = true;
+                    setPlayerPlaybackReady(true);
+                    if (playerPlayRequested) requestPlayerPlay();
                 });
         }).catch(function () {
             if (openToken !== playerOpenToken || overlay.hidden) return;
@@ -831,6 +950,10 @@
         videoAudioRequested = false;
         videoAudioReady = false;
         videoPlayConfirmed = false;
+        playerReadyForPlayback = false;
+        playerPlayRequested = false;
+        playerPauseRequested = false;
+        setPlayerPlaybackReady(false);
         overlay.classList.add('is-closing');
         animatePlayerFromTrigger(playerTrigger, true);
         if (window.AudioEngine) AudioEngine.setAmbientDucked(false);
@@ -860,8 +983,13 @@
     }
 
     function togglePlayer() {
-        if (!vimeoPlayer) return;
+        if (!vimeoPlayer || !playerReadyForPlayback) {
+            if (playerPaused) playerPlayRequested = true;
+            return;
+        }
         if (!playerPaused) {
+            playerPlayRequested = false;
+            playerPauseRequested = true;
             playerPaused = true;
             updatePlayButton(true);
             stopProgressSync();
@@ -871,33 +999,7 @@
             return;
         }
 
-        /* Estas tres peticiones salen directamente desde el clic del
-           usuario. Así el navegador puede autorizar sonido y reproducción
-           sin que una espera intermedia consuma ese gesto. */
-        videoAudioRequested = true;
-        videoAudioReady = true;
-        videoPlayConfirmed = false;
-        if (window.AudioEngine) AudioEngine.setAmbientDucked(true);
-        ensureVideoAudio(vimeoPlayer).catch(function () {
-            updateMuteButton(true);
-        });
-        var play = vimeoPlayer.play();
-        playerPaused = false;
-        updatePlayButton(false);
-        updateMuteButton(false);
-        showPlayerControls();
-        startProgressSync();
-        Promise.resolve(play).then(function () {
-            if (videoAudioRequested && vimeoPlayer) {
-                return ensureVideoAudio(vimeoPlayer);
-            }
-        }).catch(function () {
-            if (videoPlayConfirmed) return;
-            playerPaused = true;
-            updatePlayButton(true);
-            videoAudioRequested = false;
-            if (window.AudioEngine) AudioEngine.setAmbientDucked(false);
-        });
+        requestPlayerPlay();
     }
 
     function toggleMute() {
